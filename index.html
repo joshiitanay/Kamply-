@@ -209,33 +209,33 @@
       position: relative;
     }
 
-    /* 3D Stage & Deep Dark Red Orbital Radiance */
+    /* 3D Stage & Deep Blood-Red Orbital Radiance */
     .splash-stage {
       position: relative;
-      width: 124px;
-      height: 124px;
+      width: 126px;
+      height: 126px;
       margin-bottom: 22px;
       display: flex;
       align-items: center;
       justify-content: center;
-      perspective: 900px;
+      perspective: 1000px;
     }
 
-    /* Spinning Deep Dark Red Radiant Aura */
+    /* Pure Blood Crimson Rotating Radiance (Zero Pink / Magenta) */
     .splash-radiance-orbit {
       position: absolute;
-      inset: -28px;
+      inset: -30px;
       border-radius: 50%;
       background: conic-gradient(
         from 0deg,
         transparent 0deg,
-        rgba(136, 19, 55, 0.95) 80deg,
-        rgba(159, 18, 57, 0.85) 140deg,
-        rgba(225, 29, 72, 0.5) 190deg,
-        transparent 280deg
+        rgba(153, 27, 27, 0.95) 75deg,   /* Deep Blood Red */
+        rgba(220, 38, 38, 0.95) 130deg,  /* Pure Crimson */
+        rgba(239, 68, 68, 0.75) 175deg,  /* Racing Red */
+        transparent 270deg
       );
-      filter: blur(22px);
-      animation: spinRadiance 2.6s linear infinite;
+      filter: blur(24px);
+      animation: spinRadiance 2.5s linear infinite;
       z-index: 1;
       pointer-events: none;
     }
@@ -244,10 +244,10 @@
       position: absolute;
       inset: -14px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(136, 19, 55, 0.8) 0%, rgba(76, 5, 25, 0.35) 60%, transparent 80%);
+      background: radial-gradient(circle, rgba(185, 28, 28, 0.85) 0%, rgba(127, 29, 29, 0.45) 55%, transparent 75%);
       filter: blur(18px);
       z-index: 1;
-      animation: darkPulse 2.4s ease-in-out infinite alternate;
+      animation: pureRedPulse 2.2s ease-in-out infinite alternate;
     }
 
     @keyframes spinRadiance {
@@ -255,46 +255,73 @@
       100% { transform: rotate(360deg); }
     }
 
-    @keyframes darkPulse {
+    @keyframes pureRedPulse {
       0% { transform: scale(0.92); opacity: 0.7; }
       100% { transform: scale(1.15); opacity: 1; }
     }
 
-    /* 3D Luxury Glass & Ceramic Tile */
+    /* 3D Floating Ceramic Tile with Outward Burst on Shine Complete */
     .splash-3d-card {
       position: relative;
-      width: 82px;
-      height: 82px;
+      width: 84px;
+      height: 84px;
       z-index: 3;
       transform-style: preserve-3d;
-      animation: float3d 2.8s ease-in-out infinite alternate;
+      animation: floatAndBurst 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    @keyframes float3d {
-      0% { transform: rotateX(10deg) rotateY(-12deg) translateY(0px); }
-      50% { transform: rotateX(-6deg) rotateY(12deg) translateY(-5px); }
-      100% { transform: rotateX(10deg) rotateY(-12deg) translateY(0px); }
+    /* 3D Floating + Outward Zoom Choreography */
+    @keyframes floatAndBurst {
+      0% {
+        transform: rotateX(8deg) rotateY(-8deg) scale(0.96) translateZ(0px);
+      }
+      35% {
+        transform: rotateX(-5deg) rotateY(6deg) scale(1.02) translateZ(12px);
+      }
+      62% {
+        /* As the shine sweeps across the K */
+        transform: rotateX(0deg) rotateY(0deg) scale(1.0) translateZ(18px);
+        filter: brightness(1);
+      }
+      78% {
+        /* Zoom Outward Starts */
+        transform: rotateX(0deg) rotateY(0deg) scale(1.24) translateZ(65px);
+        filter: brightness(1.25);
+        box-shadow: 0 0 65px rgba(220, 38, 38, 0.95), 0 25px 60px rgba(0, 0, 0, 0.95);
+      }
+      92% {
+        /* Peak Outward Surge */
+        transform: rotateX(0deg) rotateY(0deg) scale(1.48) translateZ(120px);
+        filter: brightness(1.4);
+        opacity: 1;
+      }
+      100% {
+        /* Seamless dissolve into dashboard */
+        transform: rotateX(0deg) rotateY(0deg) scale(1.75) translateZ(170px);
+        opacity: 0;
+        filter: blur(6px);
+      }
     }
 
     .splash-3d-inner {
       width: 100%;
       height: 100%;
-      background: linear-gradient(145deg, #161822 0%, #080A0E 100%);
-      border: 1.5px solid rgba(255, 255, 255, 0.16);
+      background: linear-gradient(145deg, #171922 0%, #07090D 100%);
+      border: 1.5px solid rgba(255, 255, 255, 0.18);
       border-radius: 24px;
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow:
         0 20px 50px rgba(0, 0, 0, 0.95),
-        0 0 35px rgba(136, 19, 55, 0.45),
-        inset 0 1px 2px rgba(255, 255, 255, 0.45),
-        inset 0 -4px 8px rgba(0, 0, 0, 0.9);
+        0 0 35px rgba(220, 38, 38, 0.45),
+        inset 0 1px 2px rgba(255, 255, 255, 0.5),
+        inset 0 -4px 8px rgba(0, 0, 0, 0.95);
       position: relative;
       overflow: hidden;
     }
 
-    /* Specular Light Shimmer Sweep */
+    /* Specular White Shimmer Sweep (Syncs with the 3D burst) */
     .splash-3d-inner::before {
       content: '';
       position: absolute;
@@ -304,30 +331,32 @@
       height: 220%;
       background: linear-gradient(
         45deg,
-        transparent 38%,
-        rgba(255, 255, 255, 0.22) 50%,
-        transparent 62%
+        transparent 36%,
+        rgba(255, 255, 255, 0.35) 50%,
+        transparent 64%
       );
       transform: rotate(25deg);
-      animation: shimmer3d 2.6s ease-in-out infinite;
+      animation: specularShineSweep 1.8s ease-in-out forwards;
       pointer-events: none;
     }
 
-    @keyframes shimmer3d {
-      0% { transform: translateY(-100%) rotate(25deg); }
-      100% { transform: translateY(100%) rotate(25deg); }
+    @keyframes specularShineSweep {
+      0% { transform: translateY(-110%) rotate(25deg); opacity: 0; }
+      20% { opacity: 1; }
+      85% { transform: translateY(110%) rotate(25deg); opacity: 1; }
+      100% { transform: translateY(110%) rotate(25deg); opacity: 0; }
     }
 
-    /* Pure White 3D Letter K */
+    /* Pure Stark White 3D Letter K */
     .splash-letter {
       font-size: 42px;
       font-weight: 800;
       color: #FFFFFF;
       letter-spacing: -0.04em;
       text-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.9),
-        0 0 20px rgba(255, 255, 255, 0.5);
-      transform: translateZ(18px);
+        0 2px 4px rgba(0, 0, 0, 0.95),
+        0 0 25px rgba(255, 255, 255, 0.6);
+      transform: translateZ(20px);
       user-select: none;
     }
 
@@ -1488,7 +1517,7 @@
       <h1 class="splash-title">Kamply</h1>
       <p class="splash-tagline">
         <span class="pip"></span>
-        <span class="tag-highlight">Making Attendance Effortless</span>
+        <span class="tag-highlight">Attend what matters. Bunk the rest.</span>
       </p>
       <div class="splash-loader"><div class="splash-loader-bar"></div></div>
     </div>
@@ -3350,16 +3379,16 @@
     saveState();
     render();
 
-    // 2.5 second cinematic startup
+    // 2.4s cinematic startup synchronized with 3D burst
     setTimeout(() => {
       const splash = document.getElementById('splash-screen');
       if (splash) {
         splash.classList.add('fade-out');
         setTimeout(() => {
           splash.remove();
-        }, 600);
+        }, 550);
       }
-    }, 2500);
+    }, 2400);
 
   })();
   </script>
