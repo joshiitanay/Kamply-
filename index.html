@@ -1,19 +1,3066 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+  <title>Kamply - College Attendance Manager</title>
+  <meta name="description" content="Modern, mobile-friendly attendance tracking, skip calculator, and Ramjas College chemistry timetables.">
+  <meta name="theme-color" content="#090D12">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap">
+
+  <style>
+    /* ==========================================================================
+       1. KAMPLY DESIGN SYSTEM - PURE DARK MODE (MOBILE-FIRST)
+       ========================================================================== */
+    :root {
+      color-scheme: dark;
+      --bg: #090D12;
+      --surface: #121820;
+      --surface-card: #161F2A;
+      --surface-elevated: #1D2836;
+      --surface-border: #243242;
+      --surface-subtle: #18222F;
+
+      --ink: #F3F7FA;
+      --ink-secondary: #94A6B8;
+      --ink-muted: #627588;
+
+      --accent: #3B82F6;
+      --accent-glow: rgba(59, 130, 246, 0.35);
+      --accent-soft: rgba(59, 130, 246, 0.15);
+      --accent-text: #60A5FA;
+
+      --safe: #10B981;
+      --safe-bg: rgba(16, 185, 129, 0.14);
+      --safe-border: rgba(16, 185, 129, 0.35);
+
+      --edge: #F59E0B;
+      --edge-bg: rgba(245, 158, 11, 0.14);
+      --edge-border: rgba(245, 158, 11, 0.35);
+
+      --short: #EF4444;
+      --short-bg: rgba(239, 68, 68, 0.14);
+      --short-border: rgba(239, 68, 68, 0.35);
+
+      --cancel: #94A3B8;
+      --cancel-bg: rgba(148, 163, 184, 0.12);
+      --cancel-border: rgba(148, 163, 184, 0.25);
+
+      --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 22px;
+      --radius-pill: 9999px;
+
+      --bottom-nav-h: 68px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-top: env(safe-area-inset-top, 0px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-main);
+      font-size: 15px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      padding-top: var(--safe-top);
+    }
+
+    /* Fullscreen Startup Splash Screen */
+    .splash-screen {
+      position: fixed;
+      inset: 0;
+      background: #070B0F;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.45s;
+    }
+
+    .splash-screen.fade-out {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .splash-content {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: splashPop 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .splash-logo-wrap {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .splash-logo {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+      border-radius: var(--radius-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFF;
+      font-size: 38px;
+      font-weight: 800;
+      box-shadow: 0 0 35px var(--accent-glow);
+      z-index: 2;
+    }
+
+    .splash-ring {
+      position: absolute;
+      inset: -6px;
+      border: 2px dashed rgba(59, 130, 246, 0.45);
+      border-radius: 28px;
+      animation: spin 10s linear infinite;
+    }
+
+    .splash-title {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(180deg, #FFFFFF 0%, #94A6B8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    .splash-sub {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-text);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .splash-loader {
+      width: 140px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-pill);
+      margin-top: 24px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .splash-loader-bar {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: linear-gradient(90deg, #3B82F6, #60A5FA);
+      border-radius: var(--radius-pill);
+      animation: loaderProgress 1.1s ease-in-out infinite;
+    }
+
+    @keyframes splashPop {
+      0% { opacity: 0; transform: scale(0.85); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes loaderProgress {
+      0% { transform: translateX(-100%); }
+      50% { transform: translateX(0); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Confetti Canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* Main Container Shell */
+    .app-shell {
+      width: 100%;
+      max-width: 580px;
+      margin: 0 auto;
+      padding: 16px 16px calc(var(--bottom-nav-h) + var(--safe-bottom) + 24px);
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    /* Fluid Tab Transitions */
+    .tab-content {
+      animation: tabFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes tabFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Header Bar */
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 6px 0 16px;
+      border-bottom: 1px solid var(--surface-border);
+      margin-bottom: 18px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px var(--accent-glow);
+      color: #FFF;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: -0.04em;
+    }
+
+    .brand-text h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      background: linear-gradient(180deg, #FFFFFF 0%, #B8C7D8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-text .course-badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-secondary);
+      letter-spacing: 0.02em;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profile-pill-quick {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-text);
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+    .profile-pill-quick:active {
+      transform: scale(0.96);
+    }
+
+    .celebrate-btn-quick {
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-pill);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.15s ease;
+    }
+
+    .celebrate-btn-quick:active {
+      transform: scale(1.15) rotate(15deg);
+    }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(18, 24, 32, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--surface-border);
+      z-index: 100;
+      padding-bottom: var(--safe-bottom);
+    }
+
+    .nav-container {
+      max-width: 580px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      height: var(--bottom-nav-h);
+      padding: 0 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      background: transparent;
+      border: none;
+      color: var(--ink-muted);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      padding: 4px;
+    }
+
+    .nav-item svg {
+      width: 22px;
+      height: 22px;
+      stroke-width: 2;
+      stroke: currentColor;
+      fill: none;
+      transition: transform 0.2s ease, stroke 0.2s ease;
+    }
+
+    .nav-item span {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-item[aria-current="page"] {
+      color: var(--accent-text);
+    }
+
+    .nav-item[aria-current="page"] svg {
+      transform: translateY(-2px);
+      stroke: var(--accent-text);
+      filter: drop-shadow(0 2px 6px var(--accent-glow));
+    }
+
+    .nav-item[aria-current="page"]::after {
+      content: '';
+      position: absolute;
+      bottom: 6px;
+      width: 16px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: var(--radius-pill);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    /* Common Card Styling */
+    .card {
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 14px;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--ink-secondary);
+      margin-bottom: 14px;
+    }
+
+    /* Status Pills */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .pill.safe { background: var(--safe-bg); color: var(--safe); border: 1px solid var(--safe-border); }
+    .pill.edge { background: var(--edge-bg); color: var(--edge); border: 1px solid var(--edge-border); }
+    .pill.short { background: var(--short-bg); color: var(--short); border: 1px solid var(--short-border); }
+    .pill.none { background: var(--surface-subtle); color: var(--ink-muted); border: 1px solid var(--surface-border); }
+
+    /* Button Controls */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 46px;
+      padding: 0 18px;
+      background: var(--surface-elevated);
+      color: var(--ink);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+
+    .btn:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+
+    .btn.primary {
+      background: linear-gradient(180deg, #3B82F6 0%, #2563EB 100%);
+      border-color: #2563EB;
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+
+    .btn.primary:hover:not(:disabled) {
+      filter: brightness(1.1);
+    }
+
+    .btn.secondary {
+      background: var(--surface-card);
+      border-color: var(--surface-border);
+    }
+
+    .btn.warning {
+      background: var(--edge-bg);
+      border-color: var(--edge-border);
+      color: #FBBF24;
+    }
+
+    .btn.danger {
+      background: var(--short-bg);
+      border-color: var(--short-border);
+      color: #F87171;
+    }
+
+    .btn.danger.armed {
+      background: #DC2626;
+      border-color: #DC2626;
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
+      animation: pulse 1s infinite alternate;
+    }
+
+    .btn.w-full {
+      width: 100%;
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.02); }
+    }
+
+    /* Date Navigation Bar */
+    .date-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .date-info {
+      flex: 1;
+      text-align: center;
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 8px 12px;
+      min-width: 0;
+    }
+
+    .date-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .date-sub {
+      font-size: 12px;
+      color: var(--ink-secondary);
+      font-weight: 500;
+    }
+
+    .date-btn {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 18px;
+      transition: background 0.15s ease;
+    }
+
+    .date-btn:hover {
+      background: var(--surface-elevated);
+    }
+
+    .date-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    input[type="date"] {
+      width: 100%;
+      min-height: 42px;
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      color: var(--ink);
+      padding: 6px 12px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      color-scheme: dark;
+    }
+
+    /* Class Cards */
+    .class-card {
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .class-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .class-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+
+    .class-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--ink-secondary);
+      flex-wrap: wrap;
+    }
+
+    .time-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .mark-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      background: var(--surface);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--surface-border);
+    }
+
+    .mark-btn {
+      min-height: 46px;
+      border: none;
+      background: transparent;
+      color: var(--ink-secondary);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .mark-btn:active:not(:disabled) {
+      transform: scale(0.96);
+    }
+
+    .mark-btn[aria-pressed="true"][data-st="P"] {
+      background: #10B981;
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+    }
+
+    .mark-btn[aria-pressed="true"][data-st="A"] {
+      background: #EF4444;
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+    }
+
+    .mark-btn[aria-pressed="true"][data-st="C"] {
+      background: #475569;
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(71, 85, 105, 0.35);
+    }
+
+    .mark-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Quick Action Row (Today) */
+    .today-actions-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    /* Hero Overall Summary Card */
+    .hero-summary {
+      background: linear-gradient(135deg, #152238 0%, #101722 100%);
+      border: 1px solid #2B3D55;
+      border-radius: var(--radius-xl);
+      padding: 20px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-summary::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 140px;
+      height: 140px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .hero-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink-secondary);
+      margin-bottom: 4px;
+    }
+
+    .hero-pct {
+      font-size: 48px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      font-variant-numeric: tabular-nums;
+      color: #FFFFFF;
+    }
+
+    .hero-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      margin-top: 14px;
+    }
+
+    .stat-col {
+      text-align: center;
+    }
+
+    .stat-val {
+      font-size: 18px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: var(--ink);
+    }
+
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--ink-secondary);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* Bunk Simulator Card */
+    .bunk-simulator-card {
+      background: linear-gradient(135deg, #1A1F2C 0%, #141824 100%);
+      border: 1px solid #2E3748;
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .sim-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: var(--surface);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--surface-border);
+      margin: 12px 0;
+    }
+
+    .sim-tab-btn {
+      min-height: 38px;
+      border: none;
+      background: transparent;
+      color: var(--ink-secondary);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .sim-tab-btn[aria-pressed="true"] {
+      background: var(--accent);
+      color: #FFF;
+      box-shadow: 0 2px 8px var(--accent-glow);
+    }
+
+    .stepper-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .stepper-btn {
+      width: 44px;
+      height: 44px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      color: var(--ink);
+      font-size: 20px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .stepper-btn:active {
+      transform: scale(0.94);
+    }
+
+    .stepper-value {
+      font-size: 26px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: #FFF;
+      text-align: center;
+      min-width: 60px;
+    }
+
+    .sim-result-box {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      text-align: center;
+    }
+
+    .sim-result-pct {
+      font-size: 28px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      margin: 4px 0;
+    }
+
+    /* Progress Scale Bar */
+    .scale-box {
+      position: relative;
+      margin: 24px 0 12px;
+    }
+
+    .scale-bar {
+      position: relative;
+      height: 10px;
+      background: var(--surface-elevated);
+      border-radius: var(--radius-pill);
+      overflow: visible;
+    }
+
+    .scale-fill {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      border-radius: var(--radius-pill);
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .scale-fill.safe { background: linear-gradient(90deg, #059669, #10B981); }
+    .scale-fill.edge { background: linear-gradient(90deg, #D97706, #F59E0B); }
+    .scale-fill.short { background: linear-gradient(90deg, #DC2626, #EF4444); }
+    .scale-fill.none { background: var(--surface-border); }
+
+    .scale-target-tick {
+      position: absolute;
+      top: -6px;
+      bottom: -6px;
+      width: 2px;
+      background: #FFFFFF;
+      z-index: 2;
+    }
+
+    .scale-target-label {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink-secondary);
+      white-space: nowrap;
+      padding-bottom: 4px;
+    }
+
+    .insight-card {
+      background: var(--surface-elevated);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      margin-top: 10px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .insight-card.safe { border-left-color: var(--safe); }
+    .insight-card.edge { border-left-color: var(--edge); }
+    .insight-card.short { border-left-color: var(--short); }
+
+    /* Day Selector */
+    .day-selector {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .day-chip {
+      min-height: 44px;
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      color: var(--ink-secondary);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .day-chip .chip-count {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      opacity: 0.7;
+    }
+
+    .day-chip[aria-pressed="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    .day-chip[aria-pressed="true"] .chip-count {
+      opacity: 1;
+      font-weight: 800;
+    }
+
+    /* DU Period Quick Chips */
+    .period-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .p-chip {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-sm);
+      padding: 4px 8px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--accent-text);
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .p-chip:hover {
+      background: var(--surface-elevated);
+    }
+
+    /* Form Fields */
+    .field-group {
+      margin-bottom: 14px;
+    }
+
+    .field-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-secondary);
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="time"],
+    select,
+    textarea {
+      width: 100%;
+      min-height: 46px;
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      color: var(--ink);
+      padding: 10px 14px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    /* ID Card */
+    .id-card {
+      background: linear-gradient(135deg, #182232 0%, #121A26 100%);
+      border: 1px solid #2B3B4F;
+      border-radius: var(--radius-xl);
+      padding: 18px;
+      margin-bottom: 18px;
+      position: relative;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .id-card-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .avatar-badge {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+      border-radius: var(--radius-pill);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 800;
+      color: #FFF;
+      box-shadow: 0 4px 14px var(--accent-glow);
+      flex-shrink: 0;
+    }
+
+    .id-name {
+      font-size: 18px;
+      font-weight: 800;
+      color: #FFF;
+      line-height: 1.2;
+    }
+
+    .id-roll {
+      font-size: 13px;
+      font-family: var(--font-mono);
+      color: var(--accent-text);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .id-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .id-meta-item .label {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--ink-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .id-meta-item .val {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-top: 1px;
+    }
+
+    /* Modal / Onboarding */
+    .onboarding-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(9, 13, 18, 0.96);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .onboarding-card {
+      width: 100%;
+      max-width: 500px;
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+      margin: auto;
+    }
+
+    .onboarding-steps {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    .step-dot {
+      flex: 1;
+      height: 4px;
+      background: var(--surface-border);
+      border-radius: var(--radius-pill);
+    }
+
+    .step-dot.active {
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .demo-slide {
+      text-align: center;
+      padding: 12px 0;
+    }
+
+    .demo-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-xl);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px var(--accent-glow);
+    }
+
+    .demo-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #FFF;
+      margin-bottom: 8px;
+    }
+
+    .demo-desc {
+      font-size: 14px;
+      color: var(--ink-secondary);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: calc(var(--bottom-nav-h) + var(--safe-bottom) + 16px);
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 150;
+    }
+
+    .toast-msg {
+      background: var(--surface-elevated);
+      color: var(--ink);
+      border: 1px solid var(--accent);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      padding: 10px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      animation: toastIn 0.25s ease-out;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .empty-state {
+      padding: 36px 20px;
+      text-align: center;
+      background: var(--surface-card);
+      border: 1px dashed var(--surface-border);
+      border-radius: var(--radius-lg);
+      margin: 14px 0;
+    }
+
+    .empty-icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+      opacity: 0.8;
+    }
+
+    .empty-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .empty-desc {
+      font-size: 13px;
+      color: var(--ink-secondary);
+      max-width: 320px;
+      margin: 0 auto 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fullscreen Startup Splash Screen -->
+  <div id="splash-screen" class="splash-screen">
+    <div class="splash-content">
+      <div class="splash-logo-wrap">
+        <div class="splash-logo">K</div>
+        <div class="splash-ring"></div>
+      </div>
+      <h1 class="splash-title">Kamply</h1>
+      <p class="splash-sub">Ramjas College · Chemistry</p>
+      <div class="splash-loader"><div class="splash-loader-bar"></div></div>
+    </div>
+  </div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Main Application Wrapper -->
+  <div class="app-shell">
+
+    <!-- Top Brand Header -->
+    <header class="header-bar">
+      <div class="brand-group">
+        <div class="brand-logo">K</div>
+        <div class="brand-text">
+          <h1>Kamply</h1>
+          <div class="course-badge">B.Sc. (Hons) Chemistry · Ramjas College</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="celebrate-btn-quick" data-act="trigger-confetti" aria-label="Celebrate!" title="Celebrate Milestone">🎉</button>
+        <button class="profile-pill-quick" data-act="nav" data-v="profile" aria-label="View Student Profile">
+          <span id="quick-student-name">Student</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Dynamic Application View -->
+    <main id="app" role="main"></main>
+
+  </div>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="bottom-nav" aria-label="Bottom Navigation">
+    <div class="nav-container">
+      <button class="nav-item" data-act="nav" data-v="today" aria-current="page">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Today</span>
+      </button>
+      <button class="nav-item" data-act="nav" data-v="overview">
+        <svg viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        <span>Overview</span>
+      </button>
+      <button class="nav-item" data-act="nav" data-v="timetable">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Timetable</span>
+      </button>
+      <button class="nav-item" data-act="nav" data-v="profile">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Profile</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Interactive Onboarding Modal -->
+  <div id="onboarding-modal" class="onboarding-overlay" style="display: none;"></div>
+
+  <!-- Preset Timetable Picker Modal -->
+  <div id="preset-modal" class="onboarding-overlay" style="display: none;"></div>
+
+  <!-- Timetable Sharing Modal -->
+  <div id="share-modal" class="onboarding-overlay" style="display: none;"></div>
+
+  <!-- Toast Notification System -->
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Application Logic -->
+  <script>
+  (function () {
+    'use strict';
+
+    /* ==========================================================================
+       1. CORE ATTENDANCE CALCULATION FORMULAS
+       ========================================================================== */
+    function canSkip(a, t, P) {
+      return Math.floor((1000 * a) / P) - t;
+    }
+
+    function needAttend(a, t, P) {
+      var n = P * t - 1000 * a;
+      return n <= 0 ? 0 : Math.ceil(n / (1000 - P));
+    }
+
+    function pct10(a, t) {
+      if (!t) return 0;
+      return Math.floor((1000 * a) / t);
+    }
+
+    /* ==========================================================================
+       2. RAMJAS COLLEGE OFFICIAL CHEMISTRY TIMETABLE PRESETS
+       ========================================================================== */
+    const RAMJAS_PRESETS = {
+      '1-1-A': {
+        title: '1st Year · Sem 1 · Section A',
+        year: '1st Year',
+        sem: 'Semester 1',
+        section: 'Section A',
+        subjects: [
+          { id: 'inorg-1', name: 'Inorganic Chem-I' },
+          { id: 'phys-1', name: 'Physical Chem-I' },
+          { id: 'inorg-lab1', name: 'Inorganic Lab-I' },
+          { id: 'phys-lab1', name: 'Physical Lab-I' },
+          { id: 'ge', name: 'GE (Generic Elective)' },
+          { id: 'sec', name: 'SEC (Skill Course)' },
+          { id: 'vac', name: 'VAC (Value Course)' },
+          { id: 'aec', name: 'AEC (EVS / Hindi)' }
+        ],
+        slots: [
+          { day: 1, time: '08:30', subjectId: 'inorg-1' },
+          { day: 1, time: '09:30', subjectId: 'phys-1' },
+          { day: 1, time: '10:30', subjectId: 'ge' },
+          { day: 2, time: '09:30', subjectId: 'inorg-1' },
+          { day: 2, time: '10:30', subjectId: 'sec' },
+          { day: 2, time: '13:00', subjectId: 'inorg-lab1' },
+          { day: 3, time: '08:30', subjectId: 'phys-1' },
+          { day: 3, time: '09:30', subjectId: 'ge' },
+          { day: 3, time: '11:30', subjectId: 'aec' },
+          { day: 4, time: '09:30', subjectId: 'phys-lab1' },
+          { day: 4, time: '13:00', subjectId: 'vac' },
+          { day: 5, time: '08:30', subjectId: 'inorg-1' },
+          { day: 5, time: '09:30', subjectId: 'phys-1' },
+          { day: 5, time: '10:30', subjectId: 'ge' },
+          { day: 6, time: '09:30', subjectId: 'sec' },
+          { day: 6, time: '10:30', subjectId: 'aec' }
+        ]
+      },
+      '2-3-A': {
+        title: '2nd Year · Sem 3 · Section A',
+        year: '2nd Year',
+        sem: 'Semester 3',
+        section: 'Section A',
+        subjects: [
+          { id: 'org-t', name: 'Organic Theory' },
+          { id: 'inorg-t', name: 'Inorganic Theory' },
+          { id: 'phys-t', name: 'Physical Theory' },
+          { id: 'org-p', name: 'Organic Practical' },
+          { id: 'inorg-p', name: 'Inorganic Practical' },
+          { id: 'phys-p', name: 'Physical Practical' },
+          { id: 'ge', name: 'GE' },
+          { id: 'sec', name: 'SEC' },
+          { id: 'vac', name: 'VAC' }
+        ],
+        slots: [
+          { day: 1, time: '08:30', subjectId: 'org-t' },
+          { day: 1, time: '09:30', subjectId: 'inorg-t' },
+          { day: 1, time: '10:30', subjectId: 'ge' },
+          { day: 2, time: '08:30', subjectId: 'phys-t' },
+          { day: 2, time: '09:30', subjectId: 'org-t' },
+          { day: 2, time: '10:30', subjectId: 'sec' },
+          { day: 3, time: '09:30', subjectId: 'inorg-p' },
+          { day: 3, time: '13:00', subjectId: 'phys-t' },
+          { day: 4, time: '09:30', subjectId: 'org-p' },
+          { day: 4, time: '13:00', subjectId: 'vac' },
+          { day: 5, time: '08:30', subjectId: 'inorg-t' },
+          { day: 5, time: '09:30', subjectId: 'phys-p' },
+          { day: 5, time: '13:00', subjectId: 'ge' },
+          { day: 6, time: '08:30', subjectId: 'ge' },
+          { day: 6, time: '09:30', subjectId: 'phys-t' },
+          { day: 6, time: '10:30', subjectId: 'inorg-t' }
+        ]
+      },
+      '3-5-A': {
+        title: '3rd Year · Sem 5 · Section A',
+        year: '3rd Year',
+        sem: 'Semester 5',
+        section: 'Section A',
+        subjects: [
+          { id: 'org-4', name: 'Organic Chem-IV' },
+          { id: 'phys-5', name: 'Physical Chem-V' },
+          { id: 'dse-1', name: 'DSE-1 (Analytical)' },
+          { id: 'dse-2', name: 'DSE-2 (Industrial)' },
+          { id: 'org-lab4', name: 'Organic Lab-IV' },
+          { id: 'phys-lab5', name: 'Physical Lab-V' }
+        ],
+        slots: [
+          { day: 1, time: '08:30', subjectId: 'org-4' },
+          { day: 1, time: '09:30', subjectId: 'phys-5' },
+          { day: 1, time: '10:30', subjectId: 'dse-1' },
+          { day: 2, time: '08:30', subjectId: 'dse-2' },
+          { day: 2, time: '09:30', subjectId: 'org-4' },
+          { day: 2, time: '10:30', subjectId: 'phys-5' },
+          { day: 3, time: '09:30', subjectId: 'org-lab4' },
+          { day: 3, time: '13:00', subjectId: 'dse-1' },
+          { day: 4, time: '09:30', subjectId: 'phys-lab5' },
+          { day: 4, time: '13:00', subjectId: 'dse-2' },
+          { day: 5, time: '08:30', subjectId: 'org-4' },
+          { day: 5, time: '09:30', subjectId: 'phys-5' },
+          { day: 6, time: '08:30', subjectId: 'dse-1' },
+          { day: 6, time: '09:30', subjectId: 'dse-2' }
+        ]
+      }
+    };
+
+    /* ==========================================================================
+       3. CONSTANTS & SYSTEM CONFIGURATION
+       ========================================================================== */
+    const STORAGE_KEY = 'kamply.v1';
+    const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    const DEFAULT_SUBJECTS = [
+      { id: 'org-t', name: 'Organic Theory' },
+      { id: 'inorg-t', name: 'Inorganic Theory' },
+      { id: 'phys-t', name: 'Physical Theory' },
+      { id: 'org-p', name: 'Organic Practical' },
+      { id: 'inorg-p', name: 'Inorganic Practical' },
+      { id: 'phys-p', name: 'Physical Practical' },
+      { id: 'ge', name: 'GE' },
+      { id: 'sec', name: 'SEC' },
+      { id: 'vac', name: 'VAC' },
+      { id: 'aec', name: 'AEC' }
+    ];
+
+    const DEFAULT_PROFILE = {
+      name: 'Tanay Joshi',
+      roll: '24/CHEM/001',
+      college: 'Ramjas College',
+      course: 'B.Sc. (Hons) Chemistry',
+      year: '2nd Year',
+      sem: 'Semester 3',
+      section: 'Section A'
+    };
+
+    const pad = n => String(n).padStart(2, '0');
+    const keyOf = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+    const parseKey = k => {
+      const p = k.split('-').map(Number);
+      return new Date(p[0], p[1] - 1, p[2], 12, 0, 0);
+    };
+    const addDays = (k, n) => {
+      const d = parseKey(k);
+      d.setDate(d.getDate() + n);
+      return keyOf(d);
+    };
+    const todayKey = () => keyOf(new Date());
+
+    const fmtDate = k => parseKey(k).toLocaleDateString('en-IN', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+
+    const fmtTime = t => {
+      if (!t) return 'Time not set';
+      const p = t.split(':').map(Number);
+      return ((p[0] + 11) % 12 + 1) + ':' + pad(p[1]) + ' ' + (p[0] >= 12 ? 'PM' : 'AM');
+    };
+
+    const uid = () => Math.random().toString(36).slice(2, 9);
+    const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+
+    const isExtraKey = k => {
+      const parts = k.split('|');
+      return parts.length > 1 && parts[1].indexOf('extra-') === 0;
+    };
+    const bySlot = (a, b) => (a.time || '99:99').localeCompare(b.time || '99:99');
+    const clampThr = v => {
+      v = Math.round(Number(v));
+      return isFinite(v) ? Math.min(999, Math.max(10, v)) : 667;
+    };
+
+    /* ==========================================================================
+       4. LIGHTWEIGHT ZERO-DEPENDENCY CONFETTI ENGINE
+       ========================================================================== */
+    function fireConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#EC4899', '#8B5CF6'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.45,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rv: (Math.random() - 0.5) * 12,
+          opacity: 1
+        });
+      }
+
+      let animId;
+      const startTime = performance.now();
+
+      function update(now) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const elapsed = (now - startTime) / 1000;
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35; // Gravity
+          p.rotation += p.rv;
+          p.opacity = Math.max(0, 1 - elapsed / 2.2);
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotation * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = p.opacity;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+          ctx.restore();
+        });
+
+        if (elapsed < 2.2) {
+          animId = requestAnimationFrame(update);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          cancelAnimationFrame(animId);
+        }
+      }
+
+      animId = requestAnimationFrame(update);
+    }
+
+    /* ==========================================================================
+       5. STATE MANAGEMENT & STORAGE ('kamply.v1')
+       ========================================================================== */
+    function baseState() {
+      return {
+        v: 1,
+        threshold: 667,
+        onboarded: false,
+        profile: Object.assign({}, DEFAULT_PROFILE),
+        subjects: DEFAULT_SUBJECTS.map(s => ({ id: s.id, name: s.name })),
+        slots: [],
+        records: {}
+      };
+    }
+
+    function normalize(o, isRestore) {
+      if (!o || typeof o !== 'object') throw new Error('Invalid state object');
+
+      const rawSubjects = Array.isArray(o.subjects) ? o.subjects : DEFAULT_SUBJECTS;
+      const subjects = rawSubjects
+        .filter(s => s && typeof s.id === 'string' && typeof s.name === 'string')
+        .map(s => ({ id: s.id, name: s.name.slice(0, 60) }));
+      const ids = new Set(subjects.map(s => s.id));
+
+      const rawSlots = Array.isArray(o.slots) ? o.slots : [];
+      const slots = rawSlots
+        .filter(x => x && typeof x.id === 'string' && ids.has(x.subjectId) && Number.isInteger(x.day) && x.day >= 1 && x.day <= 6)
+        .map(x => ({
+          id: x.id,
+          day: x.day,
+          subjectId: x.subjectId,
+          time: /^\d{2}:\d{2}$/.test(x.time || '') ? x.time : ''
+        }));
+
+      const records = {};
+      if (o.records && typeof o.records === 'object') {
+        for (const k in o.records) {
+          const r = o.records[k];
+          if (r && /^\d{4}-\d{2}-\d{2}$/.test(r.date || '') && ids.has(r.subjectId) &&
+              ['P', 'A', 'C', null].indexOf(r.st) > -1 && /^\d{4}-\d{2}-\d{2}\|[\w-]+$/.test(k)) {
+            records[k] = { date: r.date, subjectId: r.subjectId, st: r.st };
+          }
+        }
+      }
+
+      const profile = Object.assign({}, DEFAULT_PROFILE, (o.profile && typeof o.profile === 'object') ? o.profile : {});
+      profile.college = 'Ramjas College';
+      profile.course = 'B.Sc. (Hons) Chemistry';
+
+      let onboarded = Boolean(o.onboarded);
+      if (!onboarded && (Object.keys(records).length > 0 || slots.length > 0)) {
+        onboarded = true;
+      }
+
+      return {
+        v: 1,
+        threshold: clampThr(o.threshold),
+        onboarded: onboarded,
+        profile: profile,
+        subjects: subjects.length ? subjects : DEFAULT_SUBJECTS.map(s => ({ id: s.id, name: s.name })),
+        slots: slots,
+        records: records
+      };
+    }
+
+    let state;
+    let storageOk = true;
+
+    function loadState() {
+      let raw = null;
+      try {
+        raw = localStorage.getItem(STORAGE_KEY);
+      } catch (e) {
+        storageOk = false;
+        return baseState();
+      }
+      if (!raw) return baseState();
+      try {
+        return normalize(JSON.parse(raw), false);
+      } catch (e) {
+        return baseState();
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        storageOk = false;
+      }
+    }
+
+    /* ==========================================================================
+       6. ATTENDANCE STATISTICS & VERDICT ENGINE
+       ========================================================================== */
+    const thr = () => (state.threshold / 10).toFixed(1);
+
+    function computeStats() {
+      const m = {};
+      state.subjects.forEach(s => {
+        m[s.id] = { a: 0, t: 0, c: 0 };
+      });
+
+      for (const k in state.records) {
+        const r = state.records[k];
+        const o = m[r.subjectId];
+        if (!o) continue;
+        if (r.st === 'P') {
+          o.a++;
+          o.t++;
+        } else if (r.st === 'A') {
+          o.t++;
+        } else if (r.st === 'C') {
+          o.c++;
+        }
+      }
+      return m;
+    }
+
+    const pctText = o => o.t ? (pct10(o.a, o.t) / 10).toFixed(1) + '%' : '–';
+
+    function getVerdict(o) {
+      const P = state.threshold;
+      const plural = n => n > 1 ? 'es' : '';
+
+      if (o.t === 0) {
+        return {
+          kind: 'none',
+          label: 'No data',
+          text: 'No classes recorded yet.',
+          short: 'No classes yet'
+        };
+      }
+
+      if (1000 * o.a >= P * o.t) {
+        const x = canSkip(o.a, o.t, P);
+        if (x > 0) {
+          return {
+            kind: 'safe',
+            label: 'Safe',
+            text: 'You can skip ' + x + ' more class' + plural(x) + ' and stay at or above ' + thr() + '%.',
+            short: 'Can skip ' + x
+          };
+        }
+        return {
+          kind: 'edge',
+          label: 'On the line',
+          text: "Right on the line. Don't miss the next class.",
+          short: 'On the line'
+        };
+      }
+
+      const y = needAttend(o.a, o.t, P);
+      return {
+        kind: 'short',
+        label: 'Short',
+        text: 'Attend the next ' + y + ' class' + plural(y) + ' in a row to reach ' + thr() + '%.',
+        short: 'Attend next ' + y
+      };
+    }
+
+    const getSubjectName = id => {
+      const s = state.subjects.find(x => x.id === id);
+      return s ? s.name : 'Removed subject';
+    };
+
+    /* ==========================================================================
+       7. APPLICATION NAVIGATION & CONTROLLER
+       ========================================================================== */
+    let activeTab = 'today';
+    let viewDate = todayKey();
+    let ttDay = 1;
+    let armedAction = null;
+    let armTimer = null;
+    let toastTimer = null;
+    let onboardingStep = 1;
+
+    // What-If Bunk Simulator State
+    let simMode = 'skip'; // 'skip' or 'attend'
+    let simCount = 2;
+
+    const $app = document.getElementById('app');
+    const $onboarding = document.getElementById('onboarding-modal');
+    const $presetModal = document.getElementById('preset-modal');
+    const $shareModal = document.getElementById('share-modal');
+
+    function toast(msg) {
+      const t = document.getElementById('toast');
+      t.innerHTML = '<span class="toast-msg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' + esc(msg) + '</span>';
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        t.innerHTML = '';
+      }, 3000);
+    }
+
+    function arm(id, fn) {
+      if (armedAction === id) {
+        armedAction = null;
+        clearTimeout(armTimer);
+        fn();
+        return;
+      }
+      armedAction = id;
+      render();
+      clearTimeout(armTimer);
+      armTimer = setTimeout(() => {
+        if (armedAction === id) {
+          armedAction = null;
+          render();
+        }
+      }, 3500);
+    }
+
+    function commit() {
+      saveState();
+      render();
+    }
+
+    function getFocusSignature() {
+      const el = document.activeElement;
+      if (!el || !el.dataset || !el.dataset.act || !$app.contains(el)) return null;
+      return Object.assign({}, el.dataset);
+    }
+
+    function restoreFocus(sig) {
+      if (!sig) return;
+      const els = $app.querySelectorAll('[data-act]');
+      for (const el of els) {
+        const d = el.dataset;
+        const ks = Object.keys(sig);
+        if (Object.keys(d).length === ks.length && ks.every(k => d[k] === sig[k])) {
+          el.focus({ preventScroll: true });
+          return;
+        }
+      }
+    }
+
+    /* Auto load official preset into state */
+    function loadOfficialPreset(presetKey) {
+      const preset = RAMJAS_PRESETS[presetKey];
+      if (!preset) return false;
+
+      // Update profile
+      state.profile.year = preset.year;
+      state.profile.sem = preset.sem;
+      state.profile.section = preset.section;
+
+      // Merge / overwrite subjects
+      state.subjects = preset.subjects.map(s => ({ id: s.id, name: s.name }));
+
+      // Populate slots with unique IDs
+      state.slots = preset.slots.map(sl => ({
+        id: uid(),
+        day: sl.day,
+        time: sl.time,
+        subjectId: sl.subjectId
+      }));
+
+      commit();
+      fireConfetti();
+      return true;
+    }
+
+    /* ==========================================================================
+       8. VIEW RENDERERS
+       ========================================================================== */
+
+    /* --- VIEW 1: TODAY --- */
+    function renderTodayView() {
+      const st = computeStats();
+      const today = todayKey();
+      const isFuture = viewDate > today;
+      const dow = parseKey(viewDate).getDay();
+
+      if (dow === 0) {
+        return `
+          <div class="tab-content">
+            <div class="date-nav">
+              <button class="date-btn" data-act="day-step" data-n="-1" aria-label="Previous Day">‹</button>
+              <div class="date-info">
+                <div class="date-title">${fmtDate(viewDate)}</div>
+                <div class="date-sub">Sunday · Weekend</div>
+              </div>
+              <button class="date-btn" data-act="day-step" data-n="1" aria-label="Next Day">›</button>
+            </div>
+            <div class="date-tools">
+              <input type="date" data-act="date-pick" value="${viewDate}" aria-label="Select Date">
+              <button class="btn secondary" data-act="go-today" ${viewDate === today ? 'disabled' : ''}>Today</button>
+            </div>
+            <div class="empty-state">
+              <div class="empty-icon">☕</div>
+              <div class="empty-title">Sunday - No College!</div>
+              <div class="empty-desc">There are no classes scheduled for Sundays. Enjoy your weekend or test the Bunk Simulator in Overview!</div>
+            </div>
+          </div>
+        `;
+      }
+
+      const rows = state.slots
+        .filter(x => x.day === dow)
+        .sort(bySlot)
+        .map(x => ({ key: viewDate + '|' + x.id, subjectId: x.subjectId, time: x.time, extra: false }));
+
+      for (const k in state.records) {
+        const r = state.records[k];
+        if (r.date === viewDate && isExtraKey(k)) {
+          rows.push({ key: k, subjectId: r.subjectId, time: '', extra: true });
+        }
+      }
+
+      let classListHtml = '';
+      let markedCount = 0;
+
+      if (rows.length) {
+        classListHtml = rows.map(r => {
+          const rec = state.records[r.key];
+          const curSt = rec ? rec.st : null;
+          if (curSt) markedCount++;
+
+          const subjStat = st[r.subjectId] || { a: 0, t: 0, c: 0 };
+          const verd = getVerdict(subjStat);
+          const subjName = esc(getSubjectName(r.subjectId));
+
+          const btn = (status, label) => {
+            const isPressed = curSt === status;
+            return `
+              <button class="mark-btn" data-act="mark-status" data-key="${esc(r.key)}" data-sub="${esc(r.subjectId)}" data-st="${status}" aria-pressed="${isPressed}" ${isFuture ? 'disabled' : ''}>
+                <span>${label}</span>
+              </button>
+            `;
+          };
+
+          return `
+            <div class="class-card">
+              <div class="class-header">
+                <div>
+                  <div class="class-title">${subjName}</div>
+                  <div class="class-meta">
+                    <span class="time-tag">
+                      ${r.extra ? '⚡ Extra Class' : fmtTime(r.time)}
+                    </span>
+                    <span class="pill ${verd.kind}">${pctText(subjStat)}</span>
+                    <span>${verd.short}</span>
+                  </div>
+                </div>
+                ${r.extra ? `<button class="btn danger" style="min-height:36px;padding:0 10px;font-size:12px;" data-act="del-extra" data-key="${esc(r.key)}">Remove</button>` : ''}
+              </div>
+              <div class="mark-group" role="group" aria-label="Attendance for ${subjName}">
+                ${btn('P', 'Present')}
+                ${btn('A', 'Absent')}
+                ${btn('C', 'Cancelled')}
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else if (!state.slots.length) {
+        classListHtml = `
+          <div class="empty-state">
+            <div class="empty-icon">📋</div>
+            <div class="empty-title">Your Timetable is Empty</div>
+            <div class="empty-desc">You can auto-load the official Ramjas Chemistry timetable in 1 click or set it up manually.</div>
+            <button class="btn primary" data-act="show-preset-modal">✨ Auto-Fill Ramjas Timetable</button>
+          </div>
+        `;
+      } else {
+        classListHtml = `
+          <div class="empty-state">
+            <div class="empty-icon">🗓️</div>
+            <div class="empty-title">No Classes on ${DAYS[dow]}</div>
+            <div class="empty-desc">You have no timetable classes scheduled for ${DAYS[dow]}. If you had a make-up class, use the form below.</div>
+          </div>
+        `;
+      }
+
+      const subjectOptions = state.subjects.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('');
+
+      return `
+        <div class="tab-content">
+          <div class="date-nav">
+            <button class="date-btn" data-act="day-step" data-n="-1" aria-label="Previous Day">‹</button>
+            <div class="date-info">
+              <div class="date-title">${fmtDate(viewDate)}</div>
+              <div class="date-sub">${viewDate === today ? '● Today' : DAYS[dow]} ${rows.length ? `· ${markedCount} of ${rows.length} marked` : ''}</div>
+            </div>
+            <button class="date-btn" data-act="day-step" data-n="1" aria-label="Next Day">›</button>
+          </div>
+
+          <div class="date-tools">
+            <input type="date" data-act="date-pick" value="${viewDate}" aria-label="Jump to Date">
+            <button class="btn secondary" data-act="go-today" ${viewDate === today ? 'disabled' : ''}>Today</button>
+          </div>
+
+          ${isFuture ? `
+            <div class="insight-card" style="margin-bottom:14px;border-left-color:var(--edge);">
+              ⏳ <strong>Future Date:</strong> This day has not happened yet. You can mark attendance once the day arrives.
+            </div>
+          ` : ''}
+
+          ${classListHtml}
+
+          <!-- 1-Tap Daily Actions -->
+          ${rows.length && !isFuture ? `
+            <div class="today-actions-row">
+              <button class="btn secondary" data-act="mark-all-present">
+                ⚡ Mark All Present
+              </button>
+              <button class="btn warning" data-act="mark-holiday">
+                🎉 College Holiday / Fest
+              </button>
+            </div>
+          ` : ''}
+
+          <!-- Add Extra Class -->
+          ${!isFuture && state.subjects.length ? `
+            <div class="card" style="margin-top:10px;">
+              <div class="card-title" style="font-size:14px;">➕ Add Make-up or Extra Class</div>
+              <div style="display:flex;gap:8px;margin-top:10px;">
+                <select id="extra-sub-select" style="flex:1;" aria-label="Select Subject for Extra Class">
+                  ${subjectOptions}
+                </select>
+                <button class="btn primary" data-act="add-extra">Add</button>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    /* --- VIEW 2: OVERVIEW & BUNK SIMULATOR --- */
+    function renderOverviewView() {
+      const st = computeStats();
+      let totalAttended = 0;
+      let totalHeld = 0;
+      let totalCancelled = 0;
+      let lowCount = 0;
+
+      state.subjects.forEach(s => {
+        const o = st[s.id];
+        totalAttended += o.a;
+        totalHeld += o.t;
+        totalCancelled += o.c;
+        const v = getVerdict(o);
+        if (v.kind === 'short') lowCount++;
+      });
+
+      const overallVerdict = getVerdict({ a: totalAttended, t: totalHeld });
+      const overallPctFormatted = pctText({ a: totalAttended, t: totalHeld });
+
+      // Calculate Bunk Simulator projection
+      let simAttended = totalAttended;
+      let simHeld = totalHeld + simCount;
+      if (simMode === 'attend') {
+        simAttended += simCount;
+      }
+      const simPct = simHeld ? (pct10(simAttended, simHeld) / 10).toFixed(1) : '–';
+      const simVerdict = getVerdict({ a: simAttended, t: simHeld });
+
+      const subjectCards = state.subjects.map(s => {
+        const o = st[s.id];
+        const v = getVerdict(o);
+        const currentPct = o.t ? Math.min(100, (100 * o.a) / o.t) : 0;
+        const targetPct = state.threshold / 10;
+
+        return `
+          <div class="card">
+            <div class="card-title">
+              <span>${esc(s.name)}</span>
+              <span class="pill ${v.kind}">${pctText(o)}</span>
+            </div>
+
+            <div class="scale-box" aria-hidden="true">
+              <div class="scale-bar">
+                <div class="scale-fill ${v.kind}" style="width: ${currentPct}%;"></div>
+                <div class="scale-target-tick" style="left: ${targetPct}%;">
+                  <span class="scale-target-label">${thr()}%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="insight-card ${v.kind}">
+              ${esc(v.text)}
+            </div>
+
+            <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:12px;color:var(--ink-secondary);">
+              <span>${o.a} attended of ${o.t} conducted</span>
+              <span>${o.c ? `${o.c} cancelled` : '0 cancelled'}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="tab-content">
+          <!-- Hero Overall Card -->
+          <div class="hero-summary">
+            <div class="hero-top">
+              <div>
+                <div class="hero-label">Overall Attendance</div>
+                <div class="hero-pct">${overallPctFormatted}</div>
+              </div>
+              <div>
+                <span class="pill ${overallVerdict.kind}" style="font-size:13px;padding:4px 12px;">
+                  ${overallVerdict.label}
+                </span>
+              </div>
+            </div>
+
+            <div style="font-size:13px;color:var(--ink-secondary);line-height:1.4;">
+              ${totalHeld ? `
+                Target is <strong>${thr()}%</strong>. ${lowCount ? `<span style="color:#F87171;">⚠️ ${lowCount} of ${state.subjects.length} subjects ${lowCount === 1 ? 'is' : 'are'} below target.</span>` : '<span style="color:#34D399;">✨ All subjects currently meet the requirement!</span>'}
+              ` : 'Mark classes in the Today tab to generate attendance metrics.'}
+            </div>
+
+            <div class="hero-stats-row">
+              <div class="stat-col">
+                <div class="stat-val" style="color:#34D399;">${totalAttended}</div>
+                <div class="stat-lbl">Attended</div>
+              </div>
+              <div class="stat-col">
+                <div class="stat-val" style="color:#F87171;">${totalHeld - totalAttended}</div>
+                <div class="stat-lbl">Missed</div>
+              </div>
+              <div class="stat-col">
+                <div class="stat-val" style="color:#94A3B8;">${totalCancelled}</div>
+                <div class="stat-lbl">Cancelled</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bunk Simulator / What-If Calculator -->
+          <div class="bunk-simulator-card">
+            <div class="card-title">
+              <span>🔮 Bunk Simulator</span>
+              <span class="pill none" style="font-size:11px;">What-If Tool</span>
+            </div>
+            <div class="card-subtitle" style="margin-bottom:8px;">
+              Test how missing or attending future classes will impact your score before making a decision.
+            </div>
+
+            <div class="sim-toggle">
+              <button class="sim-tab-btn" data-act="sim-mode" data-m="skip" aria-pressed="${simMode === 'skip'}">
+                If I Bunk Classes 😴
+              </button>
+              <button class="sim-tab-btn" data-act="sim-mode" data-m="attend" aria-pressed="${simMode === 'attend'}">
+                If I Attend Classes 📚
+              </button>
+            </div>
+
+            <div class="stepper-row">
+              <button class="stepper-btn" data-act="sim-step" data-delta="-1" aria-label="Decrease classes">−</button>
+              <div>
+                <div class="stepper-value">${simCount}</div>
+                <div style="font-size:11px;color:var(--ink-secondary);text-align:center;">Class${simCount > 1 ? 'es' : ''}</div>
+              </div>
+              <button class="stepper-btn" data-act="sim-step" data-delta="1" aria-label="Increase classes">+</button>
+            </div>
+
+            <div class="sim-result-box">
+              <div style="font-size:12px;color:var(--ink-secondary);">
+                Projected Overall Attendance:
+              </div>
+              <div class="sim-result-pct" style="color: ${simVerdict.kind === 'safe' ? '#34D399' : simVerdict.kind === 'edge' ? '#FBBF24' : '#F87171'};">
+                ${simPct}%
+              </div>
+              <div class="pill ${simVerdict.kind}" style="margin-top:2px;">
+                ${simVerdict.label} · ${simVerdict.short}
+              </div>
+            </div>
+          </div>
+
+          <div class="card-title" style="margin: 18px 0 10px;">Subject Breakdown</div>
+          ${subjectCards || '<div class="empty-state"><div class="empty-title">No Subjects Added</div></div>'}
+        </div>
+      `;
+    }
+
+    /* --- VIEW 3: TIMETABLE --- */
+    function renderTimetableView() {
+      const chips = [1, 2, 3, 4, 5, 6].map(d => {
+        const count = state.slots.filter(x => x.day === d).length;
+        return `
+          <button class="day-chip" data-act="pick-tt-day" data-d="${d}" aria-pressed="${ttDay === d}">
+            <span>${DAYS[d].slice(0, 3)}</span>
+            <span class="chip-count">${count}</span>
+          </button>
+        `;
+      }).join('');
+
+      const subjectOptions = sel => state.subjects.map(s => `
+        <option value="${esc(s.id)}" ${s.id === sel ? 'selected' : ''}>${esc(s.name)}</option>
+      `).join('');
+
+      const slotsForDay = state.slots.filter(x => x.day === ttDay).sort(bySlot);
+
+      const slotsListHtml = slotsForDay.map(x => `
+        <div class="card" style="padding:12px;margin-bottom:10px;">
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="time" value="${x.time}" data-act="update-slot-time" data-id="${x.id}" aria-label="Class Start Time" style="max-width:130px;">
+            <select data-act="update-slot-sub" data-id="${x.id}" aria-label="Select Subject" style="flex:1;">
+              ${subjectOptions(x.subjectId)}
+            </select>
+            <button class="btn danger" style="min-height:42px;padding:0 12px;" data-act="del-slot" data-id="${x.id}" aria-label="Remove Class">
+              ✕
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      return `
+        <div class="tab-content">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;">
+            <div>
+              <div class="card-title">Weekly Timetable</div>
+              <div class="card-subtitle" style="margin-bottom:0;">Monday to Saturday class schedule.</div>
+            </div>
+            <button class="btn secondary" style="min-height:36px;padding:0 12px;font-size:12px;" data-act="show-preset-modal">
+              ✨ Auto-Fill
+            </button>
+          </div>
+
+          <!-- Quick Period Presets -->
+          <div style="margin: 12px 0 6px;">
+            <div style="font-size:11px;color:var(--ink-secondary);margin-bottom:4px;font-weight:600;">Ramjas Period Presets:</div>
+            <div class="period-chips">
+              <span class="p-chip" data-act="apply-period" data-t="08:30">08:30 Period 1</span>
+              <span class="p-chip" data-act="apply-period" data-t="09:30">09:30 Period 2</span>
+              <span class="p-chip" data-act="apply-period" data-t="10:30">10:30 Period 3</span>
+              <span class="p-chip" data-act="apply-period" data-t="11:30">11:30 Period 4</span>
+              <span class="p-chip" data-act="apply-period" data-t="13:00">01:00 Period 5</span>
+              <span class="p-chip" data-act="apply-period" data-t="14:00">02:00 Lab/Prac</span>
+            </div>
+          </div>
+
+          <div class="day-selector" role="group" aria-label="Days of week">
+            ${chips}
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <h3 style="font-size:15px;font-weight:700;">${DAYS[ttDay]} Classes</h3>
+            <span style="font-size:12px;color:var(--ink-secondary);">${slotsForDay.length} scheduled</span>
+          </div>
+
+          ${slotsListHtml || `
+            <div class="empty-state">
+              <div class="empty-icon">📅</div>
+              <div class="empty-title">No Classes on ${DAYS[ttDay]}</div>
+              <div class="empty-desc">Tap below to add classes or load an official Ramjas timetable preset.</div>
+            </div>
+          `}
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
+            <button class="btn primary" data-act="add-slot" ${state.subjects.length ? '' : 'disabled'}>
+              ➕ Add Class
+            </button>
+            <button class="btn secondary" data-act="show-share-modal">
+              🔗 Share Schedule
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    /* --- VIEW 4: PROFILE & SETTINGS --- */
+    function renderProfileView() {
+      const p = state.profile;
+      const initials = (p.name || 'Student').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'ST';
+
+      const subjectsHtml = state.subjects.map(s => {
+        const isArmed = armedAction === 'del-sub-' + s.id;
+        return `
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+            <input type="text" value="${esc(s.name)}" data-act="rename-sub" data-id="${esc(s.id)}" maxlength="60" aria-label="Subject name">
+            <button class="btn danger ${isArmed ? 'armed' : ''}" style="white-space:nowrap;min-width:100px;" data-act="del-sub" data-id="${esc(s.id)}">
+              ${isArmed ? 'Confirm?' : 'Delete'}
+            </button>
+          </div>
+        `;
+      }).join('');
+
+      const backupString = JSON.stringify({
+        v: 1,
+        threshold: state.threshold,
+        profile: state.profile,
+        subjects: state.subjects,
+        slots: state.slots,
+        records: state.records
+      });
+
+      const isEraseArmed = armedAction === 'erase-all';
+
+      return `
+        <div class="tab-content">
+          <!-- Student ID Card -->
+          <div class="id-card">
+            <div class="id-card-top">
+              <div class="avatar-badge">${initials}</div>
+              <div style="flex:1;min-width:0;">
+                <div class="id-name">${esc(p.name || 'Student Name')}</div>
+                <div class="id-roll">${esc(p.roll || 'Roll Number Not Set')}</div>
+              </div>
+              <button class="btn secondary" style="min-height:36px;padding:0 12px;font-size:12px;" data-act="edit-profile">
+                Edit
+              </button>
+            </div>
+
+            <div class="id-meta-grid">
+              <div class="id-meta-item">
+                <div class="label">College</div>
+                <div class="val">${esc(p.college)}</div>
+              </div>
+              <div class="id-meta-item">
+                <div class="label">Course</div>
+                <div class="val">${esc(p.course)}</div>
+              </div>
+              <div class="id-meta-item">
+                <div class="label">Year & Sem</div>
+                <div class="val">${esc(p.year)} · ${esc(p.sem)}</div>
+              </div>
+              <div class="id-meta-item">
+                <div class="label">Section</div>
+                <div class="val">${esc(p.section || 'A')}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Official Timetable Quick-Load -->
+          <div class="card" style="border-color:var(--accent);background:linear-gradient(135deg, #131E2C 0%, #151D28 100%);">
+            <div class="card-title">
+              <span>Ramjas Timetable Presets</span>
+              <span class="pill safe" style="font-size:11px;">Verified</span>
+            </div>
+            <div class="card-subtitle">
+              Quickly auto-load the complete weekly chemistry timetable for Ramjas College (Semesters 1, 3, 5).
+            </div>
+            <button class="btn primary w-full" data-act="show-preset-modal">
+              ⚡ Choose Year & Auto-Load Schedule
+            </button>
+          </div>
+
+          <!-- Attendance Target -->
+          <div class="card">
+            <div class="card-title">Attendance Target</div>
+            <div class="card-subtitle">Set your minimum required attendance percentage.</div>
+
+            <div class="field-group">
+              <input type="number" id="thr-input" min="1" max="99.9" step="0.1" value="${thr()}" data-act="update-threshold">
+            </div>
+
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">
+              <button class="btn secondary" style="min-height:36px;padding:0 10px;font-size:12px;" data-act="set-quick-thr" data-val="66.7">
+                66.7% (DU Norm)
+              </button>
+              <button class="btn secondary" style="min-height:36px;padding:0 10px;font-size:12px;" data-act="set-quick-thr" data-val="75.0">
+                75.0% (Standard)
+              </button>
+              <button class="btn secondary" style="min-height:36px;padding:0 10px;font-size:12px;" data-act="set-quick-thr" data-val="80.0">
+                80.0% (Strict)
+              </button>
+            </div>
+            <p style="font-size:11px;color:var(--ink-secondary);margin-top:8px;">
+              Note: Percentages always round down so 66.6% does not prematurely display as 66.7%.
+            </p>
+          </div>
+
+          <!-- Subject Management -->
+          <div class="card">
+            <div class="card-title">Manage Subjects</div>
+            <div class="card-subtitle">Add or rename your degree subjects.</div>
+
+            ${subjectsHtml}
+
+            <div style="display:flex;gap:8px;margin-top:12px;">
+              <input type="text" id="new-sub-name" placeholder="e.g. Analytical Chemistry" maxlength="60" aria-label="New subject name">
+              <button class="btn primary" data-act="add-sub" style="white-space:nowrap;">Add Subject</button>
+            </div>
+          </div>
+
+          <!-- App Walkthrough Guide -->
+          <div class="card">
+            <div class="card-title">Kamply Guide & Walkthrough</div>
+            <div class="card-subtitle">Want a quick refresher on how Kamply calculates skips and recoveries?</div>
+            <button class="btn secondary w-full" data-act="show-demo">
+              📖 View App Demo & Walkthrough
+            </button>
+          </div>
+
+          <!-- Backup & Restore -->
+          <div class="card">
+            <div class="card-title">Backup & Restore</div>
+            <div class="card-subtitle">Export a backup to transfer your attendance data to another phone or browser.</div>
+
+            <textarea id="backup-code-area" readonly style="min-height:70px;font-family:var(--font-mono);font-size:11px;margin-bottom:8px;">${esc(backupString)}</textarea>
+            <button class="btn primary w-full" data-act="copy-backup">📋 Copy Backup Code</button>
+
+            <div style="margin-top:16px;">
+              <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Restore from Backup</label>
+              <textarea id="restore-code-area" placeholder="Paste your backup code here..." style="min-height:70px;font-family:var(--font-mono);font-size:11px;margin-bottom:8px;"></textarea>
+              <button class="btn secondary w-full" data-act="restore-backup">Restore Data</button>
+            </div>
+          </div>
+
+          <!-- Danger Zone -->
+          <div class="card" style="border-color:var(--short-border);">
+            <div class="card-title" style="color:#F87171;">Danger Zone</div>
+            <div class="card-subtitle">Reset all timetable slots and attendance records from this browser.</div>
+            <button class="btn danger w-full ${isEraseArmed ? 'armed' : ''}" data-act="erase-all">
+              ${isEraseArmed ? '⚠️ Tap Again to Confirm Erase' : 'Erase All Data'}
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ==========================================================================
+       9. MODAL RENDERERS (ONBOARDING, PRESETS, SHARING)
+       ========================================================================== */
+
+    /* Onboarding Modal */
+    function renderOnboardingModal() {
+      if (state.onboarded && onboardingStep === 0) {
+        $onboarding.style.display = 'none';
+        $onboarding.innerHTML = '';
+        return;
+      }
+
+      $onboarding.style.display = 'flex';
+
+      if (onboardingStep === 1) {
+        const p = state.profile;
+        $onboarding.innerHTML = `
+          <div class="onboarding-card">
+            <div class="onboarding-steps">
+              <div class="step-dot active"></div>
+              <div class="step-dot"></div>
+            </div>
+
+            <div style="text-align:center;margin-bottom:18px;">
+              <div class="brand-logo" style="margin:0 auto 10px;width:44px;height:44px;font-size:22px;">K</div>
+              <h2 style="font-size:22px;font-weight:800;color:#FFF;letter-spacing:-0.02em;">Welcome to Kamply</h2>
+              <p style="font-size:13px;color:var(--ink-secondary);margin-top:4px;">Set up your academic details to get started.</p>
+            </div>
+
+            <div class="field-group">
+              <label>College</label>
+              <input type="text" value="${esc(p.college)}" disabled style="opacity:0.8;cursor:not-allowed;">
+            </div>
+
+            <div class="field-group">
+              <label>Course</label>
+              <input type="text" value="${esc(p.course)}" disabled style="opacity:0.8;cursor:not-allowed;">
+            </div>
+
+            <div class="field-group">
+              <label>Student Full Name</label>
+              <input type="text" id="ob-name" value="${esc(p.name)}" placeholder="Enter your full name">
+            </div>
+
+            <div class="field-group">
+              <label>College Roll Number</label>
+              <input type="text" id="ob-roll" value="${esc(p.roll)}" placeholder="e.g. 24/CHEM/042">
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div class="field-group">
+                <label>Academic Year</label>
+                <select id="ob-year">
+                  <option value="1st Year" ${p.year === '1st Year' ? 'selected' : ''}>1st Year</option>
+                  <option value="2nd Year" ${p.year === '2nd Year' ? 'selected' : ''}>2nd Year</option>
+                  <option value="3rd Year" ${p.year === '3rd Year' ? 'selected' : ''}>3rd Year</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label>Semester</label>
+                <select id="ob-sem">
+                  <option value="Semester 1" ${p.sem === 'Semester 1' ? 'selected' : ''}>Semester 1</option>
+                  <option value="Semester 2" ${p.sem === 'Semester 2' ? 'selected' : ''}>Semester 2</option>
+                  <option value="Semester 3" ${p.sem === 'Semester 3' ? 'selected' : ''}>Semester 3</option>
+                  <option value="Semester 4" ${p.sem === 'Semester 4' ? 'selected' : ''}>Semester 4</option>
+                  <option value="Semester 5" ${p.sem === 'Semester 5' ? 'selected' : ''}>Semester 5</option>
+                  <option value="Semester 6" ${p.sem === 'Semester 6' ? 'selected' : ''}>Semester 6</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label>Section</label>
+              <input type="text" id="ob-section" value="${esc(p.section)}" placeholder="e.g. Section A">
+            </div>
+
+            <div style="background:var(--accent-soft);border:1px solid var(--accent);border-radius:var(--radius-md);padding:10px 12px;margin-bottom:14px;font-size:12px;color:var(--accent-text);">
+              ✨ <strong>Auto-Fill:</strong> We'll automatically prepare your official Ramjas Chemistry timetable so you don't have to enter it manually!
+            </div>
+
+            <div style="display:flex;gap:8px;margin-top:12px;">
+              <button class="btn primary" style="flex:1;" data-act="ob-save-profile">
+                ${state.onboarded ? 'Save Changes' : 'Next: How Kamply Works →'}
+              </button>
+              ${state.onboarded ? '<button class="btn secondary" data-act="ob-close">Cancel</button>' : ''}
+            </div>
+          </div>
+        `;
+      } else if (onboardingStep === 2) {
+        $onboarding.innerHTML = `
+          <div class="onboarding-card">
+            <div class="onboarding-steps">
+              <div class="step-dot active"></div>
+              <div class="step-dot active"></div>
+            </div>
+
+            <div class="demo-slide">
+              <div class="demo-icon">🎯</div>
+              <div class="demo-title">Attendance Tracking Made Simple</div>
+              <div class="demo-desc">
+                Here is a quick look at how Kamply helps you manage college life:
+              </div>
+
+              <div style="text-align:left;display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
+                <div class="card" style="padding:12px;margin:0;">
+                  <div style="font-weight:700;color:#FFF;font-size:14px;margin-bottom:2px;">📅 Daily Class Marking</div>
+                  <div style="font-size:12px;color:var(--ink-secondary);">Every morning, open <strong>Today</strong> to mark Present, Absent, or Cancelled. Cancelled classes never penalize your score.</div>
+                </div>
+
+                <div class="card" style="padding:12px;margin:0;">
+                  <div style="font-weight:700;color:#FFF;font-size:14px;margin-bottom:2px;">🔮 Bunk & Recovery Simulator</div>
+                  <div style="font-size:12px;color:var(--ink-secondary);">Check the interactive <strong>What-If Simulator</strong> in Overview to know exactly what happens if you skip tomorrow's classes!</div>
+                </div>
+
+                <div class="card" style="padding:12px;margin:0;">
+                  <div style="font-weight:700;color:#FFF;font-size:14px;margin-bottom:2px;">🕒 Official Ramjas Timetable</div>
+                  <div style="font-size:12px;color:var(--ink-secondary);">Your timetable is pre-loaded with official Ramjas Chemistry slots. You can modify any period anytime.</div>
+                </div>
+              </div>
+
+              <button class="btn primary w-full" data-act="ob-finish">
+                ${state.onboarded ? 'Back to App ✕' : 'Get Started with Kamply 🚀'}
+              </button>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    /* Preset Timetable Picker Modal */
+    function renderPresetModal() {
+      $presetModal.style.display = 'flex';
+      $presetModal.innerHTML = `
+        <div class="onboarding-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="font-size:18px;font-weight:800;color:#FFF;">✨ Ramjas Chemistry Timetables</div>
+            <button class="btn secondary" style="min-height:32px;padding:0 10px;font-size:12px;" data-act="close-preset-modal">✕</button>
+          </div>
+          <div style="font-size:13px;color:var(--ink-secondary);margin-bottom:16px;">
+            Select your Year and Semester. Loading will automatically fill your Monday to Saturday classes:
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div class="card" style="padding:14px;margin:0;cursor:pointer;border-color:var(--accent);" data-act="load-preset-key" data-k="1-1-A">
+              <div style="font-weight:800;color:#FFF;font-size:15px;">1st Year · Semester 1 (Section A)</div>
+              <div style="font-size:12px;color:var(--ink-secondary);margin-top:2px;">Inorganic-I, Physical-I, Labs, GE, SEC, VAC, AEC</div>
+              <button class="btn primary" style="min-height:36px;font-size:12px;margin-top:8px;" data-act="load-preset-key" data-k="1-1-A">Load 1st Year Schedule →</button>
+            </div>
+
+            <div class="card" style="padding:14px;margin:0;cursor:pointer;border-color:var(--accent);" data-act="load-preset-key" data-k="2-3-A">
+              <div style="font-weight:800;color:#FFF;font-size:15px;">2nd Year · Semester 3 (Section A)</div>
+              <div style="font-size:12px;color:var(--ink-secondary);margin-top:2px;">Organic, Physical, Inorganic Theory & Practicals, GE, SEC, VAC</div>
+              <button class="btn primary" style="min-height:36px;font-size:12px;margin-top:8px;" data-act="load-preset-key" data-k="2-3-A">Load 2nd Year Schedule →</button>
+            </div>
+
+            <div class="card" style="padding:14px;margin:0;cursor:pointer;border-color:var(--accent);" data-act="load-preset-key" data-k="3-5-A">
+              <div style="font-weight:800;color:#FFF;font-size:15px;">3rd Year · Semester 5 (Section A)</div>
+              <div style="font-size:12px;color:var(--ink-secondary);margin-top:2px;">Organic-IV, Physical-V, DSE-1, DSE-2, Advanced Labs</div>
+              <button class="btn primary" style="min-height:36px;font-size:12px;margin-top:8px;" data-act="load-preset-key" data-k="3-5-A">Load 3rd Year Schedule →</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /* Timetable Sharing Modal */
+    function renderShareModal() {
+      $shareModal.style.display = 'flex';
+      const shareData = JSON.stringify({
+        subjects: state.subjects,
+        slots: state.slots
+      });
+
+      $shareModal.innerHTML = `
+        <div class="onboarding-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="font-size:18px;font-weight:800;color:#FFF;">🔗 Share Section Timetable</div>
+            <button class="btn secondary" style="min-height:32px;padding:0 10px;font-size:12px;" data-act="close-share-modal">✕</button>
+          </div>
+          <div style="font-size:13px;color:var(--ink-secondary);margin-bottom:14px;">
+            Share your weekly schedule with classmates in your section so they don't have to enter it manually:
+          </div>
+
+          <textarea id="share-code-area" readonly style="min-height:70px;font-family:var(--font-mono);font-size:11px;margin-bottom:8px;">${esc(shareData)}</textarea>
+          <button class="btn primary w-full" data-act="copy-share-code">📋 Copy Timetable Code</button>
+
+          <div style="margin-top:16px;">
+            <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Import Timetable from a Classmate</label>
+            <textarea id="import-share-area" placeholder="Paste timetable code from friend..." style="min-height:70px;font-family:var(--font-mono);font-size:11px;margin-bottom:8px;"></textarea>
+            <button class="btn secondary w-full" data-act="import-share-code">Import Timetable</button>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ==========================================================================
+       10. MAIN RENDER DISPATCHER
+       ========================================================================== */
+    function render() {
+      const qName = document.getElementById('quick-student-name');
+      if (qName) {
+        qName.textContent = state.profile && state.profile.name ? state.profile.name.split(' ')[0] : 'Profile';
+      }
+
+      document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => {
+        const isCurrent = btn.dataset.v === activeTab;
+        btn.setAttribute('aria-current', isCurrent ? 'page' : 'false');
+      });
+
+      if (!state.onboarded) {
+        renderOnboardingModal();
+        return;
+      } else if (onboardingStep > 0) {
+        renderOnboardingModal();
+      } else {
+        $onboarding.style.display = 'none';
+        $onboarding.innerHTML = '';
+      }
+
+      const focusSig = getFocusSignature();
+      const views = {
+        today: renderTodayView,
+        overview: renderOverviewView,
+        timetable: renderTimetableView,
+        profile: renderProfileView
+      };
+
+      const renderFn = views[activeTab] || renderTodayView;
+      $app.innerHTML = renderFn();
+      restoreFocus(focusSig);
+    }
+
+    /* ==========================================================================
+       11. EVENT DELEGATION
+       ========================================================================== */
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('[data-act]');
+      if (!btn || btn.disabled || btn.tagName === 'INPUT' || btn.tagName === 'SELECT' || btn.tagName === 'TEXTAREA') return;
+
+      const act = btn.dataset.act;
+      const d = btn.dataset;
+
+      switch (act) {
+        /* Confetti Trigger */
+        case 'trigger-confetti':
+          fireConfetti();
+          toast('Keep up the great work! 🎉');
+          break;
+
+        /* Navigation */
+        case 'nav':
+          activeTab = d.v;
+          armedAction = null;
+          render();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          break;
+
+        /* Date Navigation */
+        case 'day-step':
+          viewDate = addDays(viewDate, +d.n);
+          render();
+          break;
+
+        case 'go-today':
+          viewDate = todayKey();
+          render();
+          break;
+
+        /* Attendance Marking */
+        case 'mark-status': {
+          const cur = state.records[d.key];
+          if (cur && cur.st === d.st) {
+            if (isExtraKey(d.key)) cur.st = null;
+            else delete state.records[d.key];
+          } else {
+            state.records[d.key] = { date: viewDate, subjectId: d.sub, st: d.st };
+            if (d.st === 'P') {
+              // Celebrate if attendance reaches safe
+              const st = computeStats();
+              let a = 0, t = 0;
+              state.subjects.forEach(s => { a += st[s.id].a; t += st[s.id].t; });
+              if (t > 0 && 1000 * a >= state.threshold * t) {
+                // Occasional celebratory sparkle
+                if (Math.random() < 0.25) fireConfetti();
+              }
+            }
+          }
+          commit();
+          break;
+        }
+
+        case 'mark-all-present': {
+          const dow = parseKey(viewDate).getDay();
+          state.slots.filter(x => x.day === dow).forEach(x => {
+            const k = viewDate + '|' + x.id;
+            if (!state.records[k] || !state.records[k].st) {
+              state.records[k] = { date: viewDate, subjectId: x.subjectId, st: 'P' };
+            }
+          });
+          commit();
+          fireConfetti();
+          toast('Marked remaining classes as Present! ✨');
+          break;
+        }
+
+        /* 1-Tap College Holiday / Fest Day */
+        case 'mark-holiday': {
+          const dow = parseKey(viewDate).getDay();
+          state.slots.filter(x => x.day === dow).forEach(x => {
+            const k = viewDate + '|' + x.id;
+            state.records[k] = { date: viewDate, subjectId: x.subjectId, st: 'C' };
+          });
+          // Also mark any extra classes on this date
+          for (const k in state.records) {
+            if (state.records[k].date === viewDate) {
+              state.records[k].st = 'C';
+            }
+          }
+          commit();
+          fireConfetti();
+          toast('🎉 College Holiday marked! Classes cancelled without penalty.');
+          break;
+        }
+
+        /* Extra Classes */
+        case 'add-extra': {
+          const sel = document.getElementById('extra-sub-select');
+          if (!sel || !sel.value) break;
+          state.records[viewDate + '|extra-' + uid()] = { date: viewDate, subjectId: sel.value, st: null };
+          commit();
+          toast('Extra class added for today.');
+          break;
+        }
+
+        case 'del-extra':
+          delete state.records[d.key];
+          commit();
+          toast('Extra class removed.');
+          break;
+
+        /* Bunk Simulator */
+        case 'sim-mode':
+          simMode = d.m;
+          render();
+          break;
+
+        case 'sim-step':
+          simCount = Math.max(1, Math.min(20, simCount + (+d.delta)));
+          render();
+          break;
+
+        /* Timetable Editing */
+        case 'pick-tt-day':
+          ttDay = +d.d;
+          render();
+          break;
+
+        case 'apply-period':
+          if (state.slots.length && state.slots.some(s => s.day === ttDay)) {
+            // Add slot with this period time
+            state.slots.push({ id: uid(), day: ttDay, subjectId: state.subjects[0].id, time: d.t });
+            commit();
+            toast('Added period at ' + fmtTime(d.t));
+          } else {
+            state.slots.push({ id: uid(), day: ttDay, subjectId: state.subjects[0].id, time: d.t });
+            commit();
+          }
+          break;
+
+        case 'add-slot':
+          if (!state.subjects.length) {
+            toast('Add subjects in Profile first.');
+            break;
+          }
+          state.slots.push({ id: uid(), day: ttDay, subjectId: state.subjects[0].id, time: '' });
+          commit();
+          break;
+
+        case 'del-slot':
+          state.slots = state.slots.filter(x => x.id !== d.id);
+          commit();
+          break;
+
+        /* Presets Modal */
+        case 'show-preset-modal':
+          renderPresetModal();
+          break;
+
+        case 'close-preset-modal':
+          $presetModal.style.display = 'none';
+          break;
+
+        case 'load-preset-key':
+          if (loadOfficialPreset(d.k)) {
+            $presetModal.style.display = 'none';
+            toast('✨ Official Ramjas Timetable loaded!');
+          }
+          break;
+
+        /* Share Modal */
+        case 'show-share-modal':
+          renderShareModal();
+          break;
+
+        case 'close-share-modal':
+          $shareModal.style.display = 'none';
+          break;
+
+        case 'copy-share-code': {
+          const area = document.getElementById('share-code-area');
+          if (area) {
+            area.focus();
+            area.select();
+            try {
+              navigator.clipboard.writeText(area.value).then(() => {
+                toast('Timetable code copied to clipboard!');
+              });
+            } catch (err) {
+              toast('Code selected. Press Ctrl+C or Copy.');
+            }
+          }
+          break;
+        }
+
+        case 'import-share-code': {
+          const area = document.getElementById('import-share-area');
+          const code = area ? area.value.trim() : '';
+          if (!code) {
+            toast('Please paste the timetable code first.');
+            break;
+          }
+          try {
+            const data = JSON.parse(code);
+            if (Array.isArray(data.subjects) && Array.isArray(data.slots)) {
+              state.subjects = data.subjects;
+              state.slots = data.slots.map(s => ({
+                id: uid(),
+                day: s.day,
+                time: s.time,
+                subjectId: s.subjectId
+              }));
+              commit();
+              $shareModal.style.display = 'none';
+              fireConfetti();
+              toast('Timetable imported successfully! 🚀');
+            } else {
+              toast('Invalid timetable code.');
+            }
+          } catch (e) {
+            toast('Invalid timetable code.');
+          }
+          break;
+        }
+
+        /* Subject Management */
+        case 'add-sub': {
+          const inp = document.getElementById('new-sub-name');
+          const name = inp ? inp.value.trim() : '';
+          if (!name) {
+            toast('Please enter a subject name.');
+            break;
+          }
+          state.subjects.push({ id: 's-' + uid(), name: name.slice(0, 60) });
+          commit();
+          toast('Subject added.');
+          break;
+        }
+
+        case 'del-sub':
+          arm('del-sub-' + d.id, () => {
+            state.subjects = state.subjects.filter(s => s.id !== d.id);
+            state.slots = state.slots.filter(x => x.subjectId !== d.id);
+            for (const k in state.records) {
+              if (state.records[k].subjectId === d.id) delete state.records[k];
+            }
+            commit();
+            toast('Subject and related attendance deleted.');
+          });
+          break;
+
+        /* Profile Editing */
+        case 'edit-profile':
+          onboardingStep = 1;
+          renderOnboardingModal();
+          break;
+
+        case 'set-quick-thr':
+          state.threshold = clampThr(parseFloat(d.val) * 10);
+          commit();
+          toast('Goal updated to ' + d.val + '%.');
+          break;
+
+        case 'show-demo':
+          onboardingStep = 2;
+          renderOnboardingModal();
+          break;
+
+        /* Backup & Restore */
+        case 'copy-backup': {
+          const area = document.getElementById('backup-code-area');
+          if (area) {
+            area.focus();
+            area.select();
+            try {
+              navigator.clipboard.writeText(area.value).then(() => {
+                toast('Backup code copied to clipboard!');
+              }, () => {
+                toast('Code selected. Press Ctrl+C or Copy.');
+              });
+            } catch (err) {
+              toast('Code selected. Press Ctrl+C or Copy.');
+            }
+          }
+          break;
+        }
+
+        case 'restore-backup': {
+          const area = document.getElementById('restore-code-area');
+          const code = area ? area.value.trim() : '';
+          if (!code) {
+            toast('Please paste your backup code first.');
+            break;
+          }
+          try {
+            state = normalize(JSON.parse(code), true);
+            state.onboarded = true;
+            commit();
+            toast('Backup restored successfully!');
+          } catch (e) {
+            toast('Invalid Kamply backup code.');
+          }
+          break;
+        }
+
+        case 'erase-all':
+          arm('erase-all', () => {
+            state = baseState();
+            state.onboarded = true;
+            commit();
+            toast('All attendance and timetable data cleared.');
+          });
+          break;
+
+        /* Onboarding */
+        case 'ob-save-profile': {
+          const nameEl = document.getElementById('ob-name');
+          const rollEl = document.getElementById('ob-roll');
+          const yearEl = document.getElementById('ob-year');
+          const semEl = document.getElementById('ob-sem');
+          const secEl = document.getElementById('ob-section');
+
+          state.profile.name = nameEl ? nameEl.value.trim() || 'Student' : 'Student';
+          state.profile.roll = rollEl ? rollEl.value.trim() : '';
+          state.profile.year = yearEl ? yearEl.value : '2nd Year';
+          state.profile.sem = semEl ? semEl.value : 'Semester 3';
+          state.profile.section = secEl ? secEl.value.trim() || 'Section A' : 'Section A';
+
+          // Auto-load preset if timetable is empty
+          if (!state.slots.length) {
+            let key = '2-3-A';
+            if (state.profile.year === '1st Year') key = '1-1-A';
+            else if (state.profile.year === '3rd Year') key = '3-5-A';
+            loadOfficialPreset(key);
+          }
+
+          if (state.onboarded) {
+            onboardingStep = 0;
+            commit();
+            toast('Profile updated successfully!');
+          } else {
+            onboardingStep = 2;
+            renderOnboardingModal();
+          }
+          break;
+        }
+
+        case 'ob-close':
+          onboardingStep = 0;
+          render();
+          break;
+
+        case 'ob-finish':
+          state.onboarded = true;
+          onboardingStep = 0;
+          commit();
+          fireConfetti();
+          toast('Welcome to Kamply, ' + (state.profile.name.split(' ')[0] || 'friend') + '!');
+          break;
+      }
+    });
+
+    document.addEventListener('change', e => {
+      const el = e.target;
+      const act = el.dataset && el.dataset.act;
+      if (!act) return;
+
+      switch (act) {
+        case 'date-pick':
+          if (el.value) {
+            viewDate = el.value;
+            render();
+          }
+          break;
+
+        case 'update-slot-time': {
+          const slot = state.slots.find(s => s.id === el.dataset.id);
+          if (slot) {
+            slot.time = el.value;
+            commit();
+          }
+          break;
+        }
+
+        case 'update-slot-sub': {
+          const slot = state.slots.find(s => s.id === el.dataset.id);
+          if (slot) {
+            slot.subjectId = el.value;
+            commit();
+          }
+          break;
+        }
+
+        case 'rename-sub': {
+          const s = state.subjects.find(x => x.id === el.dataset.id);
+          const val = el.value.trim();
+          if (s && val) {
+            s.name = val.slice(0, 60);
+            commit();
+          }
+          break;
+        }
+
+        case 'update-threshold': {
+          const v = parseFloat(el.value);
+          if (isFinite(v)) {
+            state.threshold = clampThr(v * 10);
+            commit();
           }
           break;
         }
       }
     });
+
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden && activeTab === 'today') {
         render();
       }
     });
+
     /* ==========================================================================
        12. INITIALIZATION & SPLASH DISMISS
        ========================================================================== */
     state = loadState();
     saveState();
     render();
+
     // Dismiss splash screen smoothly after 1.1s
     setTimeout(() => {
       const splash = document.getElementById('splash-screen');
@@ -24,6 +3071,7 @@
         }, 500);
       }
     }, 1100);
+
   })();
   </script>
 </body>
