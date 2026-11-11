@@ -181,12 +181,12 @@
     }
 
     /* ==========================================================================
-       2. BESPOKE 3D MONOGRAM SPLASH SCREEN (PURE BLACK & DEEP BLOOD-RED VELVET)
+       2. CINEMATIC 3D SPLASH SCREEN (PURE BLACK & DEEP BLOOD-RED)
        ========================================================================== */
     .splash-screen {
       position: fixed;
       inset: 0;
-      background: #000000; /* Pure Pitch Black */
+      background: #000000;
       z-index: 99999;
       display: flex;
       align-items: center;
@@ -209,52 +209,48 @@
       position: relative;
     }
 
-    /* Coordinated Badge Wrapper (Zero Square Corner Artifacts) */
-    .splash-badge-wrap {
+    /* Stage: holds radiance + medallion */
+    .splash-stage {
       position: relative;
       width: 140px;
       height: 140px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       margin-bottom: 24px;
-    }
-
-    /* Deep Velvet Red Radiance (Strictly Circular, Isolated from 3D context) */
-    .splash-radiance-container {
-      position: absolute;
-      width: 220px;
-      height: 220px;
-      border-radius: 50%;
-      pointer-events: none;
-      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
+      perspective: 900px;
     }
 
+    /* Organic Irregular Radiance (soft feathered edges, NOT hard-clipped circle) */
     .splash-radiance-orbit {
       position: absolute;
-      width: 100%;
-      height: 100%;
+      width: 200px;
+      height: 200px;
       border-radius: 50%;
       background: conic-gradient(
         from 0deg,
         transparent 0deg,
-        rgba(153, 27, 27, 0.95) 55deg,  /* Deep Dark Blood-Red */
-        rgba(220, 38, 38, 0.85) 105deg, /* Pure Rich Crimson */
-        rgba(127, 29, 29, 0.3) 160deg,
-        transparent 240deg
+        rgba(153, 27, 27, 0.9) 60deg,
+        rgba(220, 38, 38, 0.8) 110deg,
+        rgba(127, 29, 29, 0.25) 170deg,
+        transparent 250deg
       );
       animation: spinRadiance 2.2s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+      /* Soft radial feather — organic fade, no hard edges */
+      mask-image: radial-gradient(circle, black 28%, transparent 68%);
+      -webkit-mask-image: radial-gradient(circle, black 28%, transparent 68%);
     }
 
-    .splash-radiance-core {
+    .splash-radiance-glow {
       position: absolute;
-      width: 130px;
-      height: 130px;
+      width: 140px;
+      height: 140px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(185, 28, 28, 0.65) 0%, rgba(127, 29, 29, 0.25) 50%, transparent 72%);
+      background: radial-gradient(circle, rgba(185, 28, 28, 0.7) 0%, rgba(127, 29, 29, 0.3) 45%, transparent 72%);
+      z-index: 1;
+      pointer-events: none;
       animation: deepRedPulse 2s ease-in-out infinite alternate;
     }
 
@@ -264,156 +260,131 @@
     }
 
     @keyframes deepRedPulse {
-      0%   { transform: scale(0.92); opacity: 0.65; }
-      100% { transform: scale(1.14); opacity: 1; }
+      0%   { transform: scale(0.92); opacity: 0.6; }
+      100% { transform: scale(1.15); opacity: 1; }
     }
 
-    /* 3D Stage (Strictly for the Floating Medallion) */
-    .splash-3d-stage {
-      position: relative;
-      width: 92px;
-      height: 92px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      perspective: 800px;
-      z-index: 2;
-    }
-
-    /* Exact 2-Beat Choreography: Beat 1 (Calm Float + Shine) -> Beat 2 (Direct Outward Surge) */
+    /* 3D Floating Medallion Card */
     .splash-3d-card {
       position: relative;
-      width: 92px;
-      height: 92px;
-      border-radius: 28px;
+      width: 88px;
+      height: 88px;
+      z-index: 3;
       transform-style: preserve-3d;
-      animation: floatAndSurge 2.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: floatAndSurge 2.4s ease-in-out forwards;
     }
 
     @keyframes floatAndSurge {
       0% {
-        /* Beat 1 Start: settle into position */
-        transform: rotateX(6deg) rotateY(-6deg) scale(0.96) translateZ(0px);
-      }
-      52% {
-        /* Beat 1 Peak: gentle hover, specular shine sweeps across */
-        transform: rotateX(-3deg) rotateY(4deg) scale(1.02) translateZ(8px);
-      }
-      65% {
-        /* Lock forward for the outward surge */
-        transform: rotateX(0deg) rotateY(0deg) scale(1.0) translateZ(12px);
-        filter: brightness(1);
-      }
-      84% {
-        /* Beat 2: Direct, powerful outward zoom surge */
-        transform: rotateX(0deg) rotateY(0deg) scale(1.42) translateZ(85px);
-        filter: brightness(1.25);
-        box-shadow: 0 0 65px rgba(220, 38, 38, 0.95), 0 25px 60px rgba(0, 0, 0, 0.98);
-      }
-      95% {
-        transform: rotateX(0deg) rotateY(0deg) scale(1.78) translateZ(150px);
-        filter: brightness(1.4);
+        transform: rotateX(6deg) rotateY(-5deg) scale(0.95) translateZ(0px);
         opacity: 1;
       }
+      45% {
+        /* Gentle calm float while shine sweeps */
+        transform: rotateX(-3deg) rotateY(4deg) scale(1.02) translateZ(6px);
+        opacity: 1;
+      }
+      62% {
+        /* Lock forward, prepare for surge */
+        transform: rotateX(0deg) rotateY(0deg) scale(1.0) translateZ(10px);
+        opacity: 1;
+      }
+      78% {
+        /* Smooth outward surge begins */
+        transform: rotateX(0deg) rotateY(0deg) scale(1.3) translateZ(60px);
+        opacity: 1;
+      }
+      90% {
+        /* Continue surge, start dissolving */
+        transform: rotateX(0deg) rotateY(0deg) scale(1.65) translateZ(120px);
+        opacity: 0.6;
+      }
       100% {
-        /* Dissolve seamlessly into main app */
-        transform: rotateX(0deg) rotateY(0deg) scale(2.2) translateZ(210px);
+        /* Fully dissolved into dashboard */
+        transform: rotateX(0deg) rotateY(0deg) scale(2.0) translateZ(180px);
         opacity: 0;
-        filter: blur(6px);
       }
     }
 
-    /* Precision Ceramic Medallion */
     .splash-3d-inner {
       width: 100%;
       height: 100%;
-      background: linear-gradient(145deg, #131722 0%, #06070A 100%);
+      background: linear-gradient(145deg, #151A24 0%, #06080B 100%);
       border: 1.5px solid rgba(255, 255, 255, 0.18);
-      border-radius: 28px;
+      border-radius: 26px;
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow:
         0 20px 50px rgba(0, 0, 0, 0.98),
-        0 0 30px rgba(220, 38, 38, 0.35),
-        inset 0 1px 2px rgba(255, 255, 255, 0.45),
+        0 0 28px rgba(220, 38, 38, 0.35),
+        inset 0 1px 2px rgba(255, 255, 255, 0.4),
         inset 0 -3px 8px rgba(0, 0, 0, 0.9);
       position: relative;
       overflow: hidden;
     }
 
-    /* Specular White Shimmer Light Beam */
+    /* Improved Specular White Polish Shine Beam */
     .splash-3d-inner::before {
       content: '';
       position: absolute;
-      top: -60%;
-      left: -60%;
-      width: 220%;
-      height: 220%;
+      top: -80%;
+      left: -80%;
+      width: 260%;
+      height: 260%;
       background: linear-gradient(
         45deg,
-        transparent 38%,
-        rgba(255, 255, 255, 0.45) 50%,
-        transparent 62%
+        transparent 32%,
+        rgba(255, 255, 255, 0.12) 40%,
+        rgba(255, 255, 255, 0.5) 50%,
+        rgba(255, 255, 255, 0.12) 60%,
+        transparent 68%
       );
       transform: rotate(25deg);
-      animation: specularSweep 1.1s ease-in-out 0.3s forwards;
+      animation: specularSweep 1.4s ease-in-out 0.35s forwards;
       pointer-events: none;
     }
 
     @keyframes specularSweep {
-      0%   { transform: translateY(-110%) rotate(25deg); opacity: 0; }
-      20%  { opacity: 1; }
-      80%  { transform: translateY(110%) rotate(25deg); opacity: 1; }
-      100% { transform: translateY(110%) rotate(25deg); opacity: 0; }
+      0%   { transform: translateY(-120%) rotate(25deg); opacity: 0; }
+      15%  { opacity: 0.7; }
+      50%  { opacity: 1; }
+      85%  { transform: translateY(120%) rotate(25deg); opacity: 0.7; }
+      100% { transform: translateY(120%) rotate(25deg); opacity: 0; }
     }
 
-    /* Bespoke Aerodynamic Blade K Monogram */
-    .splash-k-svg {
-      width: 56px;
-      height: 56px;
-      transform: translateZ(20px);
-      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 14px rgba(255, 255, 255, 0.35));
+    /* Clean Bold K Letter — Sharp Edges, Premium Feel */
+    .splash-letter {
+      font-size: 44px;
+      font-weight: 900;
+      color: #FFFFFF;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      letter-spacing: -0.04em;
+      text-shadow:
+        0 0 20px rgba(255, 255, 255, 0.4),
+        0 2px 4px rgba(0, 0, 0, 0.8),
+        0 0 2px rgba(255, 255, 255, 0.6);
+      z-index: 2;
+      position: relative;
     }
 
-    /* Synchronized Typography Fade-Out Block */
+    /* Text block — simple fade-in, stays visible throughout */
     .splash-text-block {
       display: flex;
       flex-direction: column;
       align-items: center;
-      animation: textSyncFade 2.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: textAppear 0.6s ease-out 0.3s both;
       z-index: 2;
     }
 
-    @keyframes textSyncFade {
+    @keyframes textAppear {
       0% {
         opacity: 0;
         transform: translateY(10px);
       }
-      18% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      62% {
-        /* Remains clear and readable while logo shines */
-        opacity: 1;
-        transform: translateY(0);
-      }
-      78% {
-        /* Fades gracefully as the K begins its outward surge */
-        opacity: 0.35;
-        transform: translateY(6px) scale(0.98);
-        filter: blur(1px);
-      }
-      90% {
-        opacity: 0;
-        transform: translateY(12px) scale(0.95);
-        filter: blur(4px);
-      }
       100% {
-        opacity: 0;
-        transform: translateY(14px) scale(0.92);
-        filter: blur(6px);
+        opacity: 1;
+        transform: translateY(0);
       }
     }
 
@@ -499,24 +470,17 @@
     .brand-logo {
       width: 36px;
       height: 36px;
-      background: linear-gradient(145deg, #181C26 0%, #0A0D14 100%);
-      border: 1px solid rgba(220, 38, 38, 0.45);
+      background: linear-gradient(145deg, #1A1F2B 0%, #0A0D14 100%);
+      border: 1px solid var(--accent);
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 16px rgba(220, 38, 38, 0.3);
+      box-shadow: 0 0 16px var(--accent-glow);
       color: #FFF;
       font-weight: 800;
       font-size: 18px;
       letter-spacing: -0.04em;
-      flex-shrink: 0;
-    }
-
-    .brand-logo svg {
-      width: 22px;
-      height: 22px;
-      display: block;
     }
 
     .brand-text h1 {
@@ -1528,66 +1492,21 @@
     </div>
   </div>
 
-  <!-- Fullscreen 2.3s Luxury 3D Startup Screen -->
+  <!-- Fullscreen Luxury 3D Startup Screen -->
   <div id="splash-screen" class="splash-screen">
     <div class="splash-content">
-      <!-- Coordinated Badge: Circular Radiance + 3D Stage (Zero Box Artifacts) -->
-      <div class="splash-badge-wrap">
-        <!-- Deep Red Radiance (Strictly Circular, Physical 50% Clip) -->
-        <div class="splash-radiance-container">
-          <div class="splash-radiance-orbit"></div>
-          <div class="splash-radiance-core"></div>
-        </div>
-
-        <!-- 3D Floating Medallion -->
-        <div class="splash-3d-stage">
-          <div class="splash-3d-card">
-            <div class="splash-3d-inner">
-              <svg class="splash-k-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <!-- Titanium White-Platinum Sheen -->
-                  <linearGradient id="bladeStem" x1="20%" y1="0%" x2="80%" y2="100%">
-                    <stop offset="0%" stop-color="#FFFFFF" />
-                    <stop offset="55%" stop-color="#F1F5F9" />
-                    <stop offset="100%" stop-color="#94A3B8" />
-                  </linearGradient>
-                  <linearGradient id="bladeTop" x1="0%" y1="100%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#E2E8F0" />
-                    <stop offset="40%" stop-color="#FFFFFF" />
-                    <stop offset="100%" stop-color="#CBD5E1" />
-                  </linearGradient>
-                  <linearGradient id="bladeBottom" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#FFFFFF" />
-                    <stop offset="60%" stop-color="#E2E8F0" />
-                    <stop offset="100%" stop-color="#64748B" />
-                  </linearGradient>
-                  <!-- Blood-Red Ruby Core Jewel -->
-                  <linearGradient id="rubyCore" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#EF4444" />
-                    <stop offset="50%" stop-color="#DC2626" />
-                    <stop offset="100%" stop-color="#7F1D1D" />
-                  </linearGradient>
-                </defs>
-
-                <!-- Vertical Titanium Chiseled Column -->
-                <path d="M 24 20 L 37 15 L 37 85 L 24 80 Z" fill="url(#bladeStem)" />
-                <path d="M 33 16.5 L 37 15 L 37 85 L 33 83.5 Z" fill="#FFFFFF" opacity="0.35" />
-
-                <!-- Top Aerodynamic Chevron Blade -->
-                <path d="M 46 46 L 73 16 L 86 16 L 58 49 Z" fill="url(#bladeTop)" />
-
-                <!-- Lower High-Tensile Sweep Blade -->
-                <path d="M 58 52 L 86 84 L 73 84 L 46 54 Z" fill="url(#bladeBottom)" />
-
-                <!-- Ruby Micro-Jewel Nexus Accent -->
-                <polygon points="39,47 44,43 45,50 44,57 39,53" fill="url(#rubyCore)" />
-              </svg>
-            </div>
+      <!-- Stage with Organic Spinning Radiance + 3D Medallion -->
+      <div class="splash-stage">
+        <div class="splash-radiance-orbit"></div>
+        <div class="splash-radiance-glow"></div>
+        <div class="splash-3d-card">
+          <div class="splash-3d-inner">
+            <span class="splash-letter">K</span>
           </div>
         </div>
       </div>
 
-      <!-- Synchronized Typography Block (Fades together as K surges forward) -->
+      <!-- Text Block — appears and stays visible -->
       <div class="splash-text-block">
         <h1 class="splash-title">Kamply</h1>
         <p class="splash-tagline">
@@ -1604,14 +1523,7 @@
     <!-- Top Brand Header -->
     <header class="header-bar">
       <div class="brand-group">
-        <div class="brand-logo" aria-label="Kamply Logo">
-          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 24 20 L 37 15 L 37 85 L 24 80 Z" fill="#FFFFFF" />
-            <path d="M 46 46 L 73 16 L 86 16 L 58 49 Z" fill="#FFFFFF" />
-            <path d="M 58 52 L 86 84 L 73 84 L 46 54 Z" fill="#FFFFFF" />
-            <polygon points="39,47 44,43 45,50 44,57 39,53" fill="#DC2626" />
-          </svg>
-        </div>
+        <div class="brand-logo">K</div>
         <div class="brand-text">
           <h1>Kamply</h1>
           <div class="course-badge">B.Sc. (Hons) Chemistry · Ramjas College</div>
@@ -2757,14 +2669,7 @@
             </div>
 
             <div style="text-align:center;margin-bottom:18px;">
-              <div class="brand-logo" style="margin:0 auto 10px;width:44px;height:44px;">
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:26px;height:26px;">
-                  <path d="M 24 20 L 37 15 L 37 85 L 24 80 Z" fill="#FFFFFF" />
-                  <path d="M 46 46 L 73 16 L 86 16 L 58 49 Z" fill="#FFFFFF" />
-                  <path d="M 58 52 L 86 84 L 73 84 L 46 54 Z" fill="#FFFFFF" />
-                  <polygon points="39,47 44,43 45,50 44,57 39,53" fill="#DC2626" />
-                </svg>
-              </div>
+              <div class="brand-logo" style="margin:0 auto 10px;width:44px;height:44px;font-size:22px;">K</div>
               <h2 style="font-size:22px;font-weight:800;color:#FFF;letter-spacing:-0.02em;">Welcome to Kamply</h2>
               <p style="font-size:13px;color:var(--ink-secondary);margin-top:4px;">Set up your academic details to get started.</p>
             </div>
