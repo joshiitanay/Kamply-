@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
   <title>Kamply - College Attendance Manager</title>
   <meta name="description" content="Modern, mobile-friendly attendance tracking, skip calculator, and Ramjas College chemistry timetables.">
-  <meta name="theme-color" content="#090D12">
+  <meta name="theme-color" content="#06080B">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,26 +14,30 @@
 
   <style>
     /* ==========================================================================
-       1. KAMPLY DESIGN SYSTEM - PURE DARK MODE (MOBILE-FIRST)
+       1. KAMPLY LUXURY DESIGN SYSTEM - OBSIDIAN BLACK, CRIMSON RED & STARK WHITE
        ========================================================================== */
     :root {
       color-scheme: dark;
-      --bg: #090D12;
-      --surface: #121820;
-      --surface-card: #161F2A;
-      --surface-elevated: #1D2836;
-      --surface-border: #243242;
-      --surface-subtle: #18222F;
+      --bg: #06080B;
+      --surface: #0E1117;
+      --surface-card: #131720;
+      --surface-elevated: #1B212D;
+      --surface-border: #232B3B;
+      --surface-subtle: #161C26;
 
-      --ink: #F3F7FA;
-      --ink-secondary: #94A6B8;
-      --ink-muted: #627588;
+      --ink: #FFFFFF;
+      --ink-secondary: #9BA8B8;
+      --ink-muted: #627284;
 
-      --accent: #3B82F6;
-      --accent-glow: rgba(59, 130, 246, 0.35);
-      --accent-soft: rgba(59, 130, 246, 0.15);
-      --accent-text: #60A5FA;
+      /* Electric Ruby / Crimson Red Brand Palette */
+      --accent: #E11D48;
+      --accent-bright: #F43F5E;
+      --accent-glow: rgba(225, 29, 72, 0.4);
+      --accent-soft: rgba(225, 29, 72, 0.14);
+      --accent-text: #FB7185;
+      --accent-border: rgba(225, 29, 72, 0.35);
 
+      /* Functional Status Colors */
       --safe: #10B981;
       --safe-bg: rgba(16, 185, 129, 0.14);
       --safe-border: rgba(16, 185, 129, 0.35);
@@ -46,9 +50,13 @@
       --short-bg: rgba(239, 68, 68, 0.14);
       --short-border: rgba(239, 68, 68, 0.35);
 
-      --cancel: #94A3B8;
-      --cancel-bg: rgba(148, 163, 184, 0.12);
-      --cancel-border: rgba(148, 163, 184, 0.25);
+      --cancel: #8B98A5;
+      --cancel-bg: rgba(139, 152, 165, 0.12);
+      --cancel-border: rgba(139, 152, 165, 0.25);
+
+      --gold: #FBBF24;
+      --gold-bg: rgba(251, 191, 36, 0.15);
+      --gold-border: rgba(251, 191, 36, 0.4);
 
       --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -84,17 +92,107 @@
       padding-top: var(--safe-top);
     }
 
-    /* Fullscreen Startup Splash Screen */
+    /* Screen-Edge Ambient Light Pulse (Option A Celebration) */
+    .screen-edge-pulse {
+      position: fixed;
+      inset: 0;
+      border: 3px solid transparent;
+      pointer-events: none;
+      z-index: 9998;
+      border-radius: 0;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .screen-edge-pulse.active-safe {
+      border-color: #10B981;
+      box-shadow: inset 0 0 45px rgba(16, 185, 129, 0.4), 0 0 35px rgba(16, 185, 129, 0.4);
+      animation: pulseBorder 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .screen-edge-pulse.active-crimson {
+      border-color: #E11D48;
+      box-shadow: inset 0 0 45px rgba(225, 29, 72, 0.45), 0 0 35px rgba(225, 29, 72, 0.45);
+      animation: pulseBorder 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes pulseBorder {
+      0% { opacity: 0; transform: scale(0.995); }
+      20% { opacity: 1; transform: scale(1); }
+      80% { opacity: 0.9; }
+      100% { opacity: 0; }
+    }
+
+    /* Achievement Floating Banner */
+    .achievement-banner {
+      position: fixed;
+      top: calc(var(--safe-top) + 16px);
+      left: 16px;
+      right: 16px;
+      margin: 0 auto;
+      max-width: 440px;
+      background: rgba(19, 23, 32, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--accent-border);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7), 0 0 25px var(--accent-glow);
+      border-radius: var(--radius-pill);
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 9999;
+      transform: translateY(-80px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .achievement-banner.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .achieve-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-pill);
+      background: var(--accent);
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .achieve-text .title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #FFF;
+      line-height: 1.2;
+    }
+
+    .achieve-text .sub {
+      font-size: 11px;
+      color: var(--accent-text);
+      font-weight: 600;
+    }
+
+    /* ==========================================================================
+       2. RADIANT STARTUP SPLASH SCREEN (2.5s CINEMATIC AURORA)
+       ========================================================================== */
     .splash-screen {
       position: fixed;
       inset: 0;
-      background: #070B0F;
-      z-index: 9999;
+      background: #050709;
+      z-index: 99999;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.45s;
+      transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.55s;
     }
 
     .splash-screen.fade-out {
@@ -108,68 +206,118 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      animation: splashPop 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      position: relative;
+    }
+
+    /* Radiant Red Ambient Light Aura */
+    .splash-aurora {
+      position: absolute;
+      top: -30px;
+      width: 170px;
+      height: 170px;
+      background: radial-gradient(circle, rgba(225, 29, 72, 0.65) 0%, rgba(225, 29, 72, 0.2) 45%, transparent 75%);
+      filter: blur(28px);
+      border-radius: 50%;
+      animation: auroraPulse 2.4s ease-in-out infinite alternate;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes auroraPulse {
+      0% { transform: scale(0.9) rotate(0deg); opacity: 0.6; }
+      50% { transform: scale(1.18) rotate(180deg); opacity: 0.95; }
+      100% { transform: scale(1.0) rotate(360deg); opacity: 0.7; }
     }
 
     .splash-logo-wrap {
       position: relative;
-      width: 80px;
-      height: 80px;
-      margin-bottom: 20px;
+      width: 84px;
+      height: 84px;
+      margin-bottom: 22px;
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 2;
     }
 
     .splash-logo {
-      width: 72px;
-      height: 72px;
-      background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+      width: 76px;
+      height: 76px;
+      background: linear-gradient(145deg, #181C26 0%, #0E121A 100%);
+      border: 2px solid rgba(225, 29, 72, 0.65);
       border-radius: var(--radius-xl);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #FFF;
+      color: #FFFFFF;
       font-size: 38px;
       font-weight: 800;
-      box-shadow: 0 0 35px var(--accent-glow);
-      z-index: 2;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 35px var(--accent-glow);
+      position: relative;
     }
 
-    .splash-ring {
+    .splash-logo::after {
+      content: '';
       position: absolute;
-      inset: -6px;
-      border: 2px dashed rgba(59, 130, 246, 0.45);
-      border-radius: 28px;
-      animation: spin 10s linear infinite;
+      inset: -1px;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, transparent 60%);
+      pointer-events: none;
     }
 
     .splash-title {
-      font-size: 32px;
+      font-size: 34px;
       font-weight: 800;
-      letter-spacing: -0.03em;
-      background: linear-gradient(180deg, #FFFFFF 0%, #94A6B8 100%);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #FFFFFF 20%, #B8C4D4 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 6px;
+      animation: titleExpand 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      z-index: 2;
+    }
+
+    @keyframes titleExpand {
+      0% { opacity: 0; letter-spacing: -0.02em; transform: translateY(6px); }
+      100% { opacity: 1; letter-spacing: 0.08em; transform: translateY(0); }
     }
 
     .splash-sub {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--accent-text);
-      letter-spacing: 0.04em;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-bright);
+      letter-spacing: 0.08em;
       text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 2;
+    }
+
+    .splash-sub .pip {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent);
+      animation: pipBlink 1.2s infinite alternate;
+    }
+
+    @keyframes pipBlink {
+      from { opacity: 0.3; }
+      to { opacity: 1; }
     }
 
     .splash-loader {
-      width: 140px;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.1);
+      width: 150px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.08);
       border-radius: var(--radius-pill);
-      margin-top: 24px;
+      margin-top: 26px;
       overflow: hidden;
       position: relative;
+      z-index: 2;
     }
 
     .splash-loader-bar {
@@ -178,18 +326,9 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      background: linear-gradient(90deg, #3B82F6, #60A5FA);
+      background: linear-gradient(90deg, #E11D48, #FB7185);
       border-radius: var(--radius-pill);
-      animation: loaderProgress 1.1s ease-in-out infinite;
-    }
-
-    @keyframes splashPop {
-      0% { opacity: 0; transform: scale(0.85); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    @keyframes spin {
-      100% { transform: rotate(360deg); }
+      animation: loaderProgress 2.2s ease-in-out infinite;
     }
 
     @keyframes loaderProgress {
@@ -198,18 +337,9 @@
       100% { transform: translateX(100%); }
     }
 
-    /* Confetti Canvas */
-    #confetti-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 999;
-    }
-
-    /* Main Container Shell */
+    /* ==========================================================================
+       3. APP SHELL & NAVIGATION (RED / BLACK THEME)
+       ========================================================================== */
     .app-shell {
       width: 100%;
       max-width: 580px;
@@ -220,20 +350,13 @@
       flex: 1;
     }
 
-    /* Fluid Tab Transitions */
     .tab-content {
       animation: tabFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     @keyframes tabFadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Header Bar */
@@ -256,12 +379,13 @@
     .brand-logo {
       width: 36px;
       height: 36px;
-      background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+      background: linear-gradient(145deg, #222938 0%, #111520 100%);
+      border: 1px solid var(--accent);
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 12px var(--accent-glow);
+      box-shadow: 0 0 16px var(--accent-glow);
       color: #FFF;
       font-weight: 800;
       font-size: 18px;
@@ -273,9 +397,7 @@
       font-weight: 800;
       letter-spacing: -0.02em;
       line-height: 1.15;
-      background: linear-gradient(180deg, #FFFFFF 0%, #B8C7D8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #FFFFFF;
     }
 
     .brand-text .course-badge {
@@ -301,7 +423,7 @@
       border-radius: var(--radius-pill);
       font-size: 12px;
       font-weight: 600;
-      color: var(--accent-text);
+      color: var(--accent-bright);
       cursor: pointer;
       transition: background 0.15s ease, transform 0.15s ease;
     }
@@ -334,9 +456,9 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(18, 24, 32, 0.94);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background: rgba(14, 17, 23, 0.95);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       border-top: 1px solid var(--surface-border);
       z-index: 100;
       padding-bottom: var(--safe-bottom);
@@ -382,13 +504,13 @@
     }
 
     .nav-item[aria-current="page"] {
-      color: var(--accent-text);
+      color: #FFFFFF;
     }
 
     .nav-item[aria-current="page"] svg {
       transform: translateY(-2px);
-      stroke: var(--accent-text);
-      filter: drop-shadow(0 2px 6px var(--accent-glow));
+      stroke: var(--accent-bright);
+      filter: drop-shadow(0 2px 8px var(--accent-glow));
     }
 
     .nav-item[aria-current="page"]::after {
@@ -399,7 +521,7 @@
       height: 3px;
       background: var(--accent);
       border-radius: var(--radius-pill);
-      box-shadow: 0 0 8px var(--accent);
+      box-shadow: 0 0 10px var(--accent);
     }
 
     /* Common Card Styling */
@@ -446,6 +568,7 @@
     .pill.edge { background: var(--edge-bg); color: var(--edge); border: 1px solid var(--edge-border); }
     .pill.short { background: var(--short-bg); color: var(--short); border: 1px solid var(--short-border); }
     .pill.none { background: var(--surface-subtle); color: var(--ink-muted); border: 1px solid var(--surface-border); }
+    .pill.admin { background: var(--gold-bg); color: var(--gold); border: 1px solid var(--gold-border); box-shadow: 0 0 8px rgba(251, 191, 36, 0.3); }
 
     /* Button Controls */
     .btn {
@@ -472,8 +595,8 @@
     }
 
     .btn.primary {
-      background: linear-gradient(180deg, #3B82F6 0%, #2563EB 100%);
-      border-color: #2563EB;
+      background: linear-gradient(180deg, #E11D48 0%, #BE123C 100%);
+      border-color: #BE123C;
       color: #FFFFFF;
       box-shadow: 0 4px 14px var(--accent-glow);
     }
@@ -699,7 +822,6 @@
       cursor: not-allowed;
     }
 
-    /* Quick Action Row (Today) */
     .today-actions-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -709,8 +831,8 @@
 
     /* Hero Overall Summary Card */
     .hero-summary {
-      background: linear-gradient(135deg, #152238 0%, #101722 100%);
-      border: 1px solid #2B3D55;
+      background: linear-gradient(135deg, #1C1118 0%, #11141B 100%);
+      border: 1px solid #381E2B;
       border-radius: var(--radius-xl);
       padding: 20px;
       margin-bottom: 16px;
@@ -725,7 +847,7 @@
       right: -40px;
       width: 140px;
       height: 140px;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(225, 29, 72, 0.28) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -759,7 +881,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
-      background: rgba(0, 0, 0, 0.25);
+      background: rgba(0, 0, 0, 0.35);
       padding: 12px;
       border-radius: var(--radius-md);
       border: 1px solid rgba(255, 255, 255, 0.05);
@@ -786,8 +908,8 @@
 
     /* Bunk Simulator Card */
     .bunk-simulator-card {
-      background: linear-gradient(135deg, #1A1F2C 0%, #141824 100%);
-      border: 1px solid #2E3748;
+      background: linear-gradient(135deg, #18141C 0%, #11141A 100%);
+      border: 1px solid #2F2432;
       border-radius: var(--radius-lg);
       padding: 18px;
       margin-bottom: 16px;
@@ -982,7 +1104,6 @@
       font-weight: 800;
     }
 
-    /* DU Period Quick Chips */
     .period-chips {
       display: flex;
       gap: 6px;
@@ -998,7 +1119,7 @@
       font-size: 11px;
       font-family: var(--font-mono);
       font-weight: 600;
-      color: var(--accent-text);
+      color: var(--accent-bright);
       cursor: pointer;
       transition: background 0.15s ease;
     }
@@ -1043,15 +1164,21 @@
       box-shadow: 0 0 0 3px var(--accent-soft);
     }
 
-    /* ID Card */
+    /* Student ID Card with Admin Aura */
     .id-card {
-      background: linear-gradient(135deg, #182232 0%, #121A26 100%);
-      border: 1px solid #2B3B4F;
+      background: linear-gradient(135deg, #1A141A 0%, #11141B 100%);
+      border: 1px solid #36222E;
       border-radius: var(--radius-xl);
       padding: 18px;
       margin-bottom: 18px;
       position: relative;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      cursor: pointer;
+    }
+
+    .id-card.is-admin {
+      border: 1px solid var(--gold);
+      box-shadow: 0 8px 30px rgba(251, 191, 36, 0.2), 0 0 15px rgba(251, 191, 36, 0.15);
     }
 
     .id-card-top {
@@ -1064,7 +1191,7 @@
     .avatar-badge {
       width: 50px;
       height: 50px;
-      background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+      background: linear-gradient(135deg, #E11D48 0%, #9F1239 100%);
       border-radius: var(--radius-pill);
       display: flex;
       align-items: center;
@@ -1074,6 +1201,11 @@
       color: #FFF;
       box-shadow: 0 4px 14px var(--accent-glow);
       flex-shrink: 0;
+    }
+
+    .avatar-badge.is-admin {
+      background: linear-gradient(135deg, #F59E0B 0%, #B45309 100%);
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
     }
 
     .id-name {
@@ -1086,7 +1218,7 @@
     .id-roll {
       font-size: 13px;
       font-family: var(--font-mono);
-      color: var(--accent-text);
+      color: var(--accent-bright);
       font-weight: 600;
       margin-top: 2px;
     }
@@ -1095,7 +1227,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.35);
       border-radius: var(--radius-md);
       padding: 10px 14px;
       border: 1px solid rgba(255, 255, 255, 0.05);
@@ -1116,13 +1248,13 @@
       margin-top: 1px;
     }
 
-    /* Modal / Onboarding */
+    /* Modal / Overlays */
     .onboarding-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(9, 13, 18, 0.96);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(6, 8, 11, 0.96);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       z-index: 200;
       display: flex;
       align-items: center;
@@ -1138,7 +1270,7 @@
       border: 1px solid var(--surface-border);
       border-radius: var(--radius-xl);
       padding: 24px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
       margin: auto;
     }
 
@@ -1257,21 +1389,33 @@
 </head>
 <body>
 
-  <!-- Fullscreen Startup Splash Screen -->
-  <div id="splash-screen" class="splash-screen">
-    <div class="splash-content">
-      <div class="splash-logo-wrap">
-        <div class="splash-logo">K</div>
-        <div class="splash-ring"></div>
-      </div>
-      <h1 class="splash-title">Kamply</h1>
-      <p class="splash-sub">Ramjas College · Chemistry</p>
-      <div class="splash-loader"><div class="splash-loader-bar"></div></div>
+  <!-- Screen-Edge Ambient Light Pulse Overlay (Option A Luxury Celebration) -->
+  <div id="screen-edge-pulse" class="screen-edge-pulse"></div>
+
+  <!-- Achievement Floating Banner -->
+  <div id="achievement-banner" class="achievement-banner">
+    <div class="achieve-icon" id="achieve-icon">✨</div>
+    <div class="achieve-text">
+      <div class="title" id="achieve-title">Milestone Reached!</div>
+      <div class="sub" id="achieve-sub">Attendance is looking great.</div>
     </div>
   </div>
 
-  <!-- Confetti Canvas -->
-  <canvas id="confetti-canvas"></canvas>
+  <!-- Fullscreen 2.5s Radiant Startup Splash Screen -->
+  <div id="splash-screen" class="splash-screen">
+    <div class="splash-content">
+      <div class="splash-aurora"></div>
+      <div class="splash-logo-wrap">
+        <div class="splash-logo">K</div>
+      </div>
+      <h1 class="splash-title">Kamply</h1>
+      <p class="splash-sub">
+        <span class="pip"></span>
+        Ramjas College · Chemistry
+      </p>
+      <div class="splash-loader"><div class="splash-loader-bar"></div></div>
+    </div>
+  </div>
 
   <!-- Main Application Wrapper -->
   <div class="app-shell">
@@ -1286,7 +1430,7 @@
         </div>
       </div>
       <div class="header-actions">
-        <button class="celebrate-btn-quick" data-act="trigger-confetti" aria-label="Celebrate!" title="Celebrate Milestone">🎉</button>
+        <button class="celebrate-btn-quick" data-act="trigger-luxury-celebrate" aria-label="Celebrate!" title="Trigger Ambient Pulse">✨</button>
         <button class="profile-pill-quick" data-act="nav" data-v="profile" aria-label="View Student Profile">
           <span id="quick-student-name">Student</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
@@ -1321,14 +1465,11 @@
     </div>
   </nav>
 
-  <!-- Interactive Onboarding Modal -->
+  <!-- Interactive Modals -->
   <div id="onboarding-modal" class="onboarding-overlay" style="display: none;"></div>
-
-  <!-- Preset Timetable Picker Modal -->
   <div id="preset-modal" class="onboarding-overlay" style="display: none;"></div>
-
-  <!-- Timetable Sharing Modal -->
   <div id="share-modal" class="onboarding-overlay" style="display: none;"></div>
+  <div id="admin-modal" class="onboarding-overlay" style="display: none;"></div>
 
   <!-- Toast Notification System -->
   <div id="toast" role="status" aria-live="polite"></div>
@@ -1356,7 +1497,7 @@
     }
 
     /* ==========================================================================
-       2. RAMJAS COLLEGE OFFICIAL CHEMISTRY TIMETABLE PRESETS
+       2. RAMJAS COLLEGE OFFICIAL CHEMISTRY TIMETABLES DATABASE
        ========================================================================== */
     const RAMJAS_PRESETS = {
       '1-1-A': {
@@ -1464,6 +1605,7 @@
        3. CONSTANTS & SYSTEM CONFIGURATION
        ========================================================================== */
     const STORAGE_KEY = 'kamply.v1';
+    const ADMIN_PASSCODE = 'RAMJAS2026'; // Secret Admin Passkey for Tanay
     const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     const DEFAULT_SUBJECTS = [
@@ -1531,64 +1673,37 @@
     };
 
     /* ==========================================================================
-       4. LIGHTWEIGHT ZERO-DEPENDENCY CONFETTI ENGINE
+       4. LUXURY CELEBRATION ENGINE (OPTION A: SCREEN EDGE AMBIENT PULSE)
        ========================================================================== */
-    function fireConfetti() {
-      const canvas = document.getElementById('confetti-canvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+    let achieveTimer = null;
 
-      const particles = [];
-      const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#EC4899', '#8B5CF6'];
+    function triggerLuxuryPulse(kind, title, subtitle) {
+      const pulseEl = document.getElementById('screen-edge-pulse');
+      const bannerEl = document.getElementById('achievement-banner');
+      const iconEl = document.getElementById('achieve-icon');
+      const titleEl = document.getElementById('achieve-title');
+      const subEl = document.getElementById('achieve-sub');
 
-      for (let i = 0; i < 90; i++) {
-        particles.push({
-          x: canvas.width / 2,
-          y: canvas.height * 0.45,
-          vx: (Math.random() - 0.5) * 14,
-          vy: (Math.random() - 0.7) * 16,
-          size: Math.random() * 8 + 4,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          rotation: Math.random() * 360,
-          rv: (Math.random() - 0.5) * 12,
-          opacity: 1
-        });
+      // Edge pulse
+      if (pulseEl) {
+        pulseEl.className = 'screen-edge-pulse ' + (kind === 'safe' ? 'active-safe' : 'active-crimson');
+        setTimeout(() => {
+          pulseEl.className = 'screen-edge-pulse';
+        }, 1800);
       }
 
-      let animId;
-      const startTime = performance.now();
+      // Banner
+      if (bannerEl && title) {
+        iconEl.textContent = kind === 'safe' ? '✨' : '🔥';
+        titleEl.textContent = title;
+        subEl.textContent = subtitle || 'Attendance requirement satisfied.';
+        bannerEl.classList.add('show');
 
-      function update(now) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const elapsed = (now - startTime) / 1000;
-
-        particles.forEach(p => {
-          p.x += p.vx;
-          p.y += p.vy;
-          p.vy += 0.35; // Gravity
-          p.rotation += p.rv;
-          p.opacity = Math.max(0, 1 - elapsed / 2.2);
-
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate((p.rotation * Math.PI) / 180);
-          ctx.fillStyle = p.color;
-          ctx.globalAlpha = p.opacity;
-          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
-          ctx.restore();
-        });
-
-        if (elapsed < 2.2) {
-          animId = requestAnimationFrame(update);
-        } else {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          cancelAnimationFrame(animId);
-        }
+        clearTimeout(achieveTimer);
+        achieveTimer = setTimeout(() => {
+          bannerEl.classList.remove('show');
+        }, 3200);
       }
-
-      animId = requestAnimationFrame(update);
     }
 
     /* ==========================================================================
@@ -1599,6 +1714,7 @@
         v: 1,
         threshold: 667,
         onboarded: false,
+        isAdmin: false,
         profile: Object.assign({}, DEFAULT_PROFILE),
         subjects: DEFAULT_SUBJECTS.map(s => ({ id: s.id, name: s.name })),
         slots: [],
@@ -1649,6 +1765,7 @@
         v: 1,
         threshold: clampThr(o.threshold),
         onboarded: onboarded,
+        isAdmin: Boolean(o.isAdmin),
         profile: profile,
         subjects: subjects.length ? subjects : DEFAULT_SUBJECTS.map(s => ({ id: s.id, name: s.name })),
         slots: slots,
@@ -1769,13 +1886,18 @@
     let onboardingStep = 1;
 
     // What-If Bunk Simulator State
-    let simMode = 'skip'; // 'skip' or 'attend'
+    let simMode = 'skip';
     let simCount = 2;
+
+    // Secret Admin Click Counter
+    let adminTapCount = 0;
+    let adminTapTimer = null;
 
     const $app = document.getElementById('app');
     const $onboarding = document.getElementById('onboarding-modal');
     const $presetModal = document.getElementById('preset-modal');
     const $shareModal = document.getElementById('share-modal');
+    const $adminModal = document.getElementById('admin-modal');
 
     function toast(msg) {
       const t = document.getElementById('toast');
@@ -1828,20 +1950,14 @@
       }
     }
 
-    /* Auto load official preset into state */
     function loadOfficialPreset(presetKey) {
       const preset = RAMJAS_PRESETS[presetKey];
       if (!preset) return false;
 
-      // Update profile
       state.profile.year = preset.year;
       state.profile.sem = preset.sem;
       state.profile.section = preset.section;
-
-      // Merge / overwrite subjects
       state.subjects = preset.subjects.map(s => ({ id: s.id, name: s.name }));
-
-      // Populate slots with unique IDs
       state.slots = preset.slots.map(sl => ({
         id: uid(),
         day: sl.day,
@@ -1850,7 +1966,7 @@
       }));
 
       commit();
-      fireConfetti();
+      triggerLuxuryPulse('safe', 'Official Schedule Loaded', preset.title);
       return true;
     }
 
@@ -2120,14 +2236,14 @@
             </div>
           </div>
 
-          <!-- Bunk Simulator / What-If Calculator -->
+          <!-- Bunk Simulator / What-If Tool -->
           <div class="bunk-simulator-card">
             <div class="card-title">
               <span>🔮 Bunk Simulator</span>
-              <span class="pill none" style="font-size:11px;">What-If Tool</span>
+              <span class="pill none" style="font-size:11px;">What-If</span>
             </div>
             <div class="card-subtitle" style="margin-bottom:8px;">
-              Test how missing or attending future classes will impact your score before making a decision.
+              Predict how missing or attending future classes will change your attendance percentage.
             </div>
 
             <div class="sim-toggle">
@@ -2207,7 +2323,7 @@
               <div class="card-subtitle" style="margin-bottom:0;">Monday to Saturday class schedule.</div>
             </div>
             <button class="btn secondary" style="min-height:36px;padding:0 12px;font-size:12px;" data-act="show-preset-modal">
-              ✨ Auto-Fill
+              ⚡ Fetch Official TT
             </button>
           </div>
 
@@ -2237,7 +2353,7 @@
             <div class="empty-state">
               <div class="empty-icon">📅</div>
               <div class="empty-title">No Classes on ${DAYS[ttDay]}</div>
-              <div class="empty-desc">Tap below to add classes or load an official Ramjas timetable preset.</div>
+              <div class="empty-desc">Tap below to add classes or fetch an official Ramjas timetable preset.</div>
             </div>
           `}
 
@@ -2253,7 +2369,7 @@
       `;
     }
 
-    /* --- VIEW 4: PROFILE & SETTINGS --- */
+    /* --- VIEW 4: PROFILE & SETTINGS (WITH ADMIN MODE) --- */
     function renderProfileView() {
       const p = state.profile;
       const initials = (p.name || 'Student').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'ST';
@@ -2283,12 +2399,17 @@
 
       return `
         <div class="tab-content">
-          <!-- Student ID Card -->
-          <div class="id-card">
+          <!-- Student ID Card (Tap 5 times for Admin Unlock) -->
+          <div class="id-card ${state.isAdmin ? 'is-admin' : ''}" data-act="id-card-tap">
             <div class="id-card-top">
-              <div class="avatar-badge">${initials}</div>
+              <div class="avatar-badge ${state.isAdmin ? 'is-admin' : ''}">
+                ${state.isAdmin ? '👑' : initials}
+              </div>
               <div style="flex:1;min-width:0;">
-                <div class="id-name">${esc(p.name || 'Student Name')}</div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div class="id-name">${esc(p.name || 'Student Name')}</div>
+                  ${state.isAdmin ? '<span class="pill admin">Admin</span>' : ''}
+                </div>
                 <div class="id-roll">${esc(p.roll || 'Roll Number Not Set')}</div>
               </div>
               <button class="btn secondary" style="min-height:36px;padding:0 12px;font-size:12px;" data-act="edit-profile">
@@ -2317,18 +2438,41 @@
           </div>
 
           <!-- Official Timetable Quick-Load -->
-          <div class="card" style="border-color:var(--accent);background:linear-gradient(135deg, #131E2C 0%, #151D28 100%);">
+          <div class="card" style="border-color:var(--accent);background:linear-gradient(135deg, #1C1218 0%, #131720 100%);">
             <div class="card-title">
               <span>Ramjas Timetable Presets</span>
               <span class="pill safe" style="font-size:11px;">Verified</span>
             </div>
             <div class="card-subtitle">
-              Quickly auto-load the complete weekly chemistry timetable for Ramjas College (Semesters 1, 3, 5).
+              Fetch the official Chemistry Department schedule for any Year and Semester.
             </div>
             <button class="btn primary w-full" data-act="show-preset-modal">
-              ⚡ Choose Year & Auto-Load Schedule
+              ⚡ Choose Year & Fetch Timetable
             </button>
           </div>
+
+          <!-- Admin Portal Card (Only Visible When Admin Mode Unlocked) -->
+          ${state.isAdmin ? `
+            <div class="card" style="border-color:var(--gold);background:linear-gradient(135deg, #1C1910 0%, #141720 100%);">
+              <div class="card-title" style="color:var(--gold);">
+                <span>👑 Ramjas Admin Controls</span>
+                <span class="pill admin">Active</span>
+              </div>
+              <div class="card-subtitle">
+                You have master admin privileges to manage section timetables and preset database.
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <button class="btn secondary" data-act="admin-view-all">Master TT Presets</button>
+                <button class="btn danger" data-act="admin-revoke">Disable Admin</button>
+              </div>
+            </div>
+          ` : `
+            <div style="text-align:center;margin-bottom:14px;">
+              <button class="btn secondary" style="min-height:32px;padding:0 12px;font-size:11px;color:var(--ink-muted);" data-act="prompt-admin-login">
+                🔒 Admin Login (Ramjas Chemistry Team)
+              </button>
+            </div>
+          `}
 
           <!-- Attendance Target -->
           <div class="card">
@@ -2350,9 +2494,6 @@
                 80.0% (Strict)
               </button>
             </div>
-            <p style="font-size:11px;color:var(--ink-secondary);margin-top:8px;">
-              Note: Percentages always round down so 66.6% does not prematurely display as 66.7%.
-            </p>
           </div>
 
           <!-- Subject Management -->
@@ -2371,7 +2512,7 @@
           <!-- App Walkthrough Guide -->
           <div class="card">
             <div class="card-title">Kamply Guide & Walkthrough</div>
-            <div class="card-subtitle">Want a quick refresher on how Kamply calculates skips and recoveries?</div>
+            <div class="card-subtitle">Review how Kamply calculates skips and recoveries.</div>
             <button class="btn secondary w-full" data-act="show-demo">
               📖 View App Demo & Walkthrough
             </button>
@@ -2380,7 +2521,7 @@
           <!-- Backup & Restore -->
           <div class="card">
             <div class="card-title">Backup & Restore</div>
-            <div class="card-subtitle">Export a backup to transfer your attendance data to another phone or browser.</div>
+            <div class="card-subtitle">Export a backup to transfer your attendance data to another phone.</div>
 
             <textarea id="backup-code-area" readonly style="min-height:70px;font-family:var(--font-mono);font-size:11px;margin-bottom:8px;">${esc(backupString)}</textarea>
             <button class="btn primary w-full" data-act="copy-backup">📋 Copy Backup Code</button>
@@ -2405,7 +2546,7 @@
     }
 
     /* ==========================================================================
-       9. MODAL RENDERERS (ONBOARDING, PRESETS, SHARING)
+       9. MODAL RENDERERS
        ========================================================================== */
 
     /* Onboarding Modal */
@@ -2482,7 +2623,7 @@
             </div>
 
             <div style="background:var(--accent-soft);border:1px solid var(--accent);border-radius:var(--radius-md);padding:10px 12px;margin-bottom:14px;font-size:12px;color:var(--accent-text);">
-              ✨ <strong>Auto-Fill:</strong> We'll automatically prepare your official Ramjas Chemistry timetable so you don't have to enter it manually!
+              ✨ <strong>Auto-Fill:</strong> We'll automatically load the verified Ramjas Chemistry timetable for your year and section!
             </div>
 
             <div style="display:flex;gap:8px;margin-top:12px;">
@@ -2515,8 +2656,8 @@
                 </div>
 
                 <div class="card" style="padding:12px;margin:0;">
-                  <div style="font-weight:700;color:#FFF;font-size:14px;margin-bottom:2px;">🔮 Bunk & Recovery Simulator</div>
-                  <div style="font-size:12px;color:var(--ink-secondary);">Check the interactive <strong>What-If Simulator</strong> in Overview to know exactly what happens if you skip tomorrow's classes!</div>
+                  <div style="font-weight:700;color:#FFF;font-size:14px;margin-bottom:2px;">🔮 Bunk Simulator</div>
+                  <div style="font-size:12px;color:var(--ink-secondary);">Check the interactive <strong>Bunk Simulator</strong> in Overview to know exactly what happens if you skip tomorrow's classes!</div>
                 </div>
 
                 <div class="card" style="padding:12px;margin:0;">
@@ -2534,36 +2675,36 @@
       }
     }
 
-    /* Preset Timetable Picker Modal */
+    /* Preset Timetable Picker Modal (Student Facing) */
     function renderPresetModal() {
       $presetModal.style.display = 'flex';
       $presetModal.innerHTML = `
         <div class="onboarding-card">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-            <div style="font-size:18px;font-weight:800;color:#FFF;">✨ Ramjas Chemistry Timetables</div>
+            <div style="font-size:18px;font-weight:800;color:#FFF;">⚡ Fetch Ramjas Timetable</div>
             <button class="btn secondary" style="min-height:32px;padding:0 10px;font-size:12px;" data-act="close-preset-modal">✕</button>
           </div>
           <div style="font-size:13px;color:var(--ink-secondary);margin-bottom:16px;">
-            Select your Year and Semester. Loading will automatically fill your Monday to Saturday classes:
+            Select your Year, Semester and Section to fetch the official Ramjas Chemistry schedule:
           </div>
 
           <div style="display:flex;flex-direction:column;gap:10px;">
             <div class="card" style="padding:14px;margin:0;cursor:pointer;border-color:var(--accent);" data-act="load-preset-key" data-k="1-1-A">
               <div style="font-weight:800;color:#FFF;font-size:15px;">1st Year · Semester 1 (Section A)</div>
               <div style="font-size:12px;color:var(--ink-secondary);margin-top:2px;">Inorganic-I, Physical-I, Labs, GE, SEC, VAC, AEC</div>
-              <button class="btn primary" style="min-height:36px;font-size:12px;margin-top:8px;" data-act="load-preset-key" data-k="1-1-A">Load 1st Year Schedule →</button>
+              <button class="btn primary" style="min-height:36px;font-size:12px;margin-top:8px;" data-act="load-preset-key" data-k="1-1-A">Fetch 1st Year Schedule →</button>
             </div>
 
             <div class="card" style="padding:14px;margin:0;cursor:pointer;border-color:var(--accent);" data-act="load-preset-key" data-k="2-3-A">
               <div style="font-weight:800;color:#FFF;font-size:15px;">2nd Year · Semester 3 (Section A)</div>
               <div style="font-size:12px;color:var(--ink-secondary);margin-top:2px;">Organic, Physical, Inorganic Theory & Practicals, GE, SEC, VAC</div>
-              <button class="btn primary" style="min-height:36px;font-size:12px;margin-top:8px;" data-act="load-preset-key" data-k="2-3-A">Load 2nd Year Schedule →</button>
+              <button class="btn primary" style="min-height:36px;font-size:12px;margin-top:8px;" data-act="load-preset-key" data-k="2-3-A">Fetch 2nd Year Schedule →</button>
             </div>
 
             <div class="card" style="padding:14px;margin:0;cursor:pointer;border-color:var(--accent);" data-act="load-preset-key" data-k="3-5-A">
               <div style="font-weight:800;color:#FFF;font-size:15px;">3rd Year · Semester 5 (Section A)</div>
               <div style="font-size:12px;color:var(--ink-secondary);margin-top:2px;">Organic-IV, Physical-V, DSE-1, DSE-2, Advanced Labs</div>
-              <button class="btn primary" style="min-height:36px;font-size:12px;margin-top:8px;" data-act="load-preset-key" data-k="3-5-A">Load 3rd Year Schedule →</button>
+              <button class="btn primary" style="min-height:36px;font-size:12px;margin-top:8px;" data-act="load-preset-key" data-k="3-5-A">Fetch 3rd Year Schedule →</button>
             </div>
           </div>
         </div>
@@ -2595,6 +2736,38 @@
             <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Import Timetable from a Classmate</label>
             <textarea id="import-share-area" placeholder="Paste timetable code from friend..." style="min-height:70px;font-family:var(--font-mono);font-size:11px;margin-bottom:8px;"></textarea>
             <button class="btn secondary w-full" data-act="import-share-code">Import Timetable</button>
+          </div>
+        </div>
+      `;
+    }
+
+    /* Admin Manager Modal */
+    function renderAdminModal() {
+      $adminModal.style.display = 'flex';
+      const presetKeys = Object.keys(RAMJAS_PRESETS);
+
+      const listHtml = presetKeys.map(k => {
+        const p = RAMJAS_PRESETS[k];
+        return `
+          <div class="card" style="padding:12px;margin-bottom:8px;">
+            <div style="font-weight:700;color:#FFF;font-size:14px;">${esc(p.title)}</div>
+            <div style="font-size:11px;color:var(--ink-secondary);">${p.slots.length} periods · ${p.subjects.length} subjects</div>
+          </div>
+        `;
+      }).join('');
+
+      $adminModal.innerHTML = `
+        <div class="onboarding-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="font-size:18px;font-weight:800;color:var(--gold);">👑 Master Timetable Manager</div>
+            <button class="btn secondary" style="min-height:32px;padding:0 10px;font-size:12px;" data-act="close-admin-modal">✕</button>
+          </div>
+          <div style="font-size:13px;color:var(--ink-secondary);margin-bottom:12px;">
+            Here are the official presets currently live in Kamply:
+          </div>
+          ${listHtml}
+          <div style="margin-top:12px;">
+            <button class="btn primary w-full" data-act="copy-admin-presets">📋 Export Master Presets JSON</button>
           </div>
         </div>
       `;
@@ -2648,11 +2821,60 @@
       const d = btn.dataset;
 
       switch (act) {
-        /* Confetti Trigger */
-        case 'trigger-confetti':
-          fireConfetti();
-          toast('Keep up the great work! 🎉');
+        /* Luxury Ambient Light Trigger */
+        case 'trigger-luxury-celebrate':
+          triggerLuxuryPulse('safe', 'You are on Track! 🚀', 'Keep up the momentum in college.');
           break;
+
+        /* ID Card Tap Counter for Secret Admin Unlock */
+        case 'id-card-tap':
+          clearTimeout(adminTapTimer);
+          adminTapCount++;
+          if (adminTapCount >= 5) {
+            adminTapCount = 0;
+            state.isAdmin = !state.isAdmin;
+            commit();
+            triggerLuxuryPulse('crimson', state.isAdmin ? '👑 Admin Mode Enabled' : '🔒 Admin Mode Disabled', 'Ramjas Chemistry Lead');
+            toast(state.isAdmin ? '👑 Admin Mode Unlocked!' : 'Admin Mode Deactivated');
+          } else {
+            adminTapTimer = setTimeout(() => { adminTapCount = 0; }, 1200);
+          }
+          break;
+
+        case 'prompt-admin-login': {
+          const pass = prompt('Enter Ramjas Chemistry Admin Passcode:');
+          if (pass === ADMIN_PASSCODE) {
+            state.isAdmin = true;
+            commit();
+            triggerLuxuryPulse('crimson', '👑 Admin Access Granted', 'Welcome Tanay!');
+            toast('👑 Admin Access Granted!');
+          } else if (pass !== null) {
+            toast('Incorrect passcode.');
+          }
+          break;
+        }
+
+        case 'admin-revoke':
+          state.isAdmin = false;
+          commit();
+          toast('Admin Mode Deactivated.');
+          break;
+
+        case 'admin-view-all':
+          renderAdminModal();
+          break;
+
+        case 'close-admin-modal':
+          $adminModal.style.display = 'none';
+          break;
+
+        case 'copy-admin-presets': {
+          const json = JSON.stringify(RAMJAS_PRESETS, null, 2);
+          navigator.clipboard.writeText(json).then(() => {
+            toast('Master Presets JSON copied to clipboard!');
+          });
+          break;
+        }
 
         /* Navigation */
         case 'nav':
@@ -2682,13 +2904,11 @@
           } else {
             state.records[d.key] = { date: viewDate, subjectId: d.sub, st: d.st };
             if (d.st === 'P') {
-              // Celebrate if attendance reaches safe
               const st = computeStats();
               let a = 0, t = 0;
               state.subjects.forEach(s => { a += st[s.id].a; t += st[s.id].t; });
               if (t > 0 && 1000 * a >= state.threshold * t) {
-                // Occasional celebratory sparkle
-                if (Math.random() < 0.25) fireConfetti();
+                if (Math.random() < 0.2) triggerLuxuryPulse('safe', 'Attendance Goal Maintained! ✨', 'You are above target.');
               }
             }
           }
@@ -2705,8 +2925,8 @@
             }
           });
           commit();
-          fireConfetti();
-          toast('Marked remaining classes as Present! ✨');
+          triggerLuxuryPulse('safe', 'All Marked Present! ✨', 'All scheduled classes recorded.');
+          toast('Marked remaining classes as Present!');
           break;
         }
 
@@ -2717,15 +2937,14 @@
             const k = viewDate + '|' + x.id;
             state.records[k] = { date: viewDate, subjectId: x.subjectId, st: 'C' };
           });
-          // Also mark any extra classes on this date
           for (const k in state.records) {
             if (state.records[k].date === viewDate) {
               state.records[k].st = 'C';
             }
           }
           commit();
-          fireConfetti();
-          toast('🎉 College Holiday marked! Classes cancelled without penalty.');
+          triggerLuxuryPulse('safe', '🎉 College Holiday / Fest', 'Classes cancelled without penalty!');
+          toast('🎉 College Holiday marked! No attendance penalty.');
           break;
         }
 
@@ -2763,15 +2982,9 @@
           break;
 
         case 'apply-period':
-          if (state.slots.length && state.slots.some(s => s.day === ttDay)) {
-            // Add slot with this period time
-            state.slots.push({ id: uid(), day: ttDay, subjectId: state.subjects[0].id, time: d.t });
-            commit();
-            toast('Added period at ' + fmtTime(d.t));
-          } else {
-            state.slots.push({ id: uid(), day: ttDay, subjectId: state.subjects[0].id, time: d.t });
-            commit();
-          }
+          state.slots.push({ id: uid(), day: ttDay, subjectId: state.subjects[0].id, time: d.t });
+          commit();
+          toast('Added period at ' + fmtTime(d.t));
           break;
 
         case 'add-slot':
@@ -2800,7 +3013,7 @@
         case 'load-preset-key':
           if (loadOfficialPreset(d.k)) {
             $presetModal.style.display = 'none';
-            toast('✨ Official Ramjas Timetable loaded!');
+            toast('✨ Official Ramjas Timetable fetched!');
           }
           break;
 
@@ -2848,8 +3061,8 @@
               }));
               commit();
               $shareModal.style.display = 'none';
-              fireConfetti();
-              toast('Timetable imported successfully! 🚀');
+              triggerLuxuryPulse('safe', 'Timetable Imported! 🚀', 'Schedule ready to use.');
+              toast('Timetable imported successfully!');
             } else {
               toast('Invalid timetable code.');
             }
@@ -2962,7 +3175,6 @@
           state.profile.sem = semEl ? semEl.value : 'Semester 3';
           state.profile.section = secEl ? secEl.value.trim() || 'Section A' : 'Section A';
 
-          // Auto-load preset if timetable is empty
           if (!state.slots.length) {
             let key = '2-3-A';
             if (state.profile.year === '1st Year') key = '1-1-A';
@@ -2990,7 +3202,7 @@
           state.onboarded = true;
           onboardingStep = 0;
           commit();
-          fireConfetti();
+          triggerLuxuryPulse('crimson', 'Welcome to Kamply! 🚀', 'Your attendance tracker is ready.');
           toast('Welcome to Kamply, ' + (state.profile.name.split(' ')[0] || 'friend') + '!');
           break;
       }
@@ -3055,22 +3267,22 @@
     });
 
     /* ==========================================================================
-       12. INITIALIZATION & SPLASH DISMISS
+       12. INITIALIZATION & 2.5s SPLASH DISMISS
        ========================================================================== */
     state = loadState();
     saveState();
     render();
 
-    // Dismiss splash screen smoothly after 1.1s
+    // 2.5 second cinematic startup
     setTimeout(() => {
       const splash = document.getElementById('splash-screen');
       if (splash) {
         splash.classList.add('fade-out');
         setTimeout(() => {
           splash.remove();
-        }, 500);
+        }, 600);
       }
-    }, 1100);
+    }, 2500);
 
   })();
   </script>
